@@ -16,6 +16,7 @@
                 <th>Loại</th>
                 <th>Kích thước</th>
                 <th>Màu sắc</th>
+                <th>Số lượng</th>
                 <th>Giá thuê</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
@@ -29,11 +30,12 @@
                 <td th:text="${tp.loaiTrangPhuc?.tenLoaiTrangPhuc}"></td>
                 <td th:text="${tp.kichThuoc}"></td>
                 <td th:text="${tp.mauSac}"></td>
+                <td th:text="${tp.soLuong}"></td>
                 <td th:text="${#numbers.formatDecimal(tp.giaThue, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
                 <td>
                     <span class="badge" th:classappend="${tp.trangThai.name()}"
-                          th:text="${tp.trangThai.name() == 'AVAILABLE' ? 'Còn hàng' :
-                                     tp.trangThai.name() == 'RENTED'    ? 'Đang thuê' : 'Không có'}">
+                          th:text="${tp.trangThai.name() == 'SAN_HANG' ? 'Còn hàng' :
+                                     tp.trangThai.name() == 'DANG_DUOC_THUE'    ? 'Đang thuê' : 'Không có'}">
                     </span>
                 </td>
                 <td>

@@ -1,7 +1,9 @@
 package rent.custome.demo.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -29,15 +31,28 @@ public class KhachHangController {
 
     @GetMapping
     public String list(HttpSession session, Model model) {
-        if(session.getAttribute("khachHang") == null){
+        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+        if(kh == null){
             return "redirect:/dang-nhap";
+        }
+
+        if(!"admin".equals(kh.getRole())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền truy cập vào trang quản trị!");
         }
         model.addAttribute("khachHangs", service.findAll());
         return "admin/list";
     }
 
     @GetMapping("/them")
-    public String showAddForm(Model model){
+    public String showAddForm(HttpSession session, Model model){
+        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+        if(kh == null){
+            return "redirect:/dang-nhap";
+        }
+
+        if(!"admin".equals(kh.getRole())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền truy cập vào trang quản trị!");
+        }
         model.addAttribute("form", new KhachHangDto());
         model.addAttribute("isEdit", false);
         return "admin/form";
@@ -62,7 +77,16 @@ public class KhachHangController {
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id ,Model model, RedirectAttributes ra){
+    public String detail(@PathVariable Long id ,Model model, RedirectAttributes ra, HttpSession session){
+        KhachHang currentKh = (KhachHang) session.getAttribute("khachHang");
+        if(currentKh == null){
+            return "redirect:/dang-nhap";
+        }
+
+        if(!"admin".equals(currentKh.getRole())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền truy cập vào trang quản trị!");
+        }
+
         KhachHang kh = service.findById(id).orElse(null);
         if(kh == null){
             ra.addFlashAttribute("error", "Không tìm thấy khách hàng");
@@ -74,7 +98,16 @@ public class KhachHangController {
     
 
     @GetMapping("/{id}/sua")
-    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra){
+    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra, HttpSession session){
+        KhachHang currentKh = (KhachHang) session.getAttribute("khachHang");
+        if(currentKh == null){
+            return "redirect:/dang-nhap";
+        }
+
+        if(!"admin".equals(currentKh.getRole())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền truy cập vào trang quản trị!");
+        }
+
         KhachHang kh = service.findById(id).orElse(null);
         if(kh == null){
             ra.addFlashAttribute("error", "Không tìm thấy khách hàng");

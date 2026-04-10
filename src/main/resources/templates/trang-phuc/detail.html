@@ -13,28 +13,29 @@
         <tr><th>Loại</th>        <td th:text="${tp.loaiTrangPhuc?.tenLoaiTrangPhuc}"></td></tr>
         <tr><th>Kích thước</th>  <td th:text="${tp.kichThuoc}"></td></tr>
         <tr><th>Màu sắc</th>     <td th:text="${tp.mauSac}"></td></tr>
+        <tr><th>Số lượng</th>    <td th:text="${tp.soLuong}"></td></tr>
         <tr><th>Giá thuê</th>    <td th:text="${#numbers.formatDecimal(tp.giaThue, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td></tr>
         <tr><th>Giá gốc</th>     <td th:text="${#numbers.formatDecimal(tp.giaGoc, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td></tr>
         <tr>
             <th>Trạng thái</th>
             <td>
                 <span class="badge" th:classappend="${tp.trangThai.name()}"
-                      th:text="${tp.trangThai.name() == 'AVAILABLE' ? 'Còn hàng' :
-                                 tp.trangThai.name() == 'RENTED'    ? 'Đang thuê' : 'Không có'}">
+                      th:text="${tp.trangThai.name() == 'SAN_HANG' ? 'Còn hàng' :
+                                 tp.trangThai.name() == 'DANG_DUOC_THUE'    ? 'Đang thuê' : 'Không có'}">
                 </span>
             </td>
         </tr>
     </table>
     <div class="mt">
-        <th:block th:if="${khachHang != null and tp.trangThai.name() == 'AVAILABLE'}">
+        <th:block th:if="${khachHang != null and tp.trangThai.name() == 'SAN_HANG'}">
             <form class="inline" th:action="@{/gio-hang/them/{id}(id=${tp.id})}" method="post">
-                <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                <button type="submit" class="btn">Thêm vào giỏ hàng</button>
             </form>
         </th:block>
         <th:block th:if="${khachHang == null}">
-            <a href="/dang-nhap" class="btn btn-primary">Đăng nhập để thêm vào giỏ</a>
+            <a href="/dang-nhap" class="btn">Đăng nhập để thêm vào giỏ</a>
         </th:block>
-        <th:block th:if="${khachHang != null and tp.trangThai.name() != 'AVAILABLE'}">
+        <th:block th:if="${khachHang != null and tp.trangThai.name() != 'SAN_HANG'}">
             <span style="color:#a00; font-size:13px;">Trang phục hiện không khả dụng</span>
         </th:block>
         <a href="/trang-phuc" class="btn" style="margin-left:6px;">Quay lại</a>

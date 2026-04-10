@@ -28,7 +28,10 @@ public class AuthController {
 
     @GetMapping("/dang-nhap")
     public String showLogin(HttpSession session){
-        if(session.getAttribute("khachHang") != null) return "redirect:/admin";
+        if(session.getAttribute("khachHang") != null){
+            KhachHang kh =  (KhachHang) session.getAttribute("khachHang");
+            return "admin".equals(kh.getRole()) ? "redirect:/admin" : "redirect:/trang-phuc";
+        }
         return "auth/login";
     }
 
@@ -40,7 +43,7 @@ public class AuthController {
         try {
             KhachHang kh = service.login(form.getUsername(), form.getPassword());
             session.setAttribute("khachHang", kh);
-            return "redirect:/admin";
+            return kh.getRole().equals("admin") ? "redirect:/admin" : "redirect:/trang-phuc";
 
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Đăng nhập thất bại");

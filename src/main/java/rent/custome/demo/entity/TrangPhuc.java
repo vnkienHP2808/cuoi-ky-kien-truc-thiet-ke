@@ -39,11 +39,18 @@ public class TrangPhuc {
     @Column(name = "gia_goc")
     private Double giaGoc;
 
+    @Column(name = "so_luong")
+    private Integer soLuong;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trang_thai")
+    private TrangPhucStatus trangThai;
+
     public TrangPhuc() {
     }
-
+    
     public TrangPhuc(Long id, String tenTrangPhuc, LoaiTrangPhuc loaiTrangPhuc, String kichThuoc, String mauSac,
-            Double giaThue, Double giaGoc, TrangPhucStatus trangThai) {
+            Double giaThue, Double giaGoc, Integer soLuong, TrangPhucStatus trangThai) {
         this.id = id;
         this.tenTrangPhuc = tenTrangPhuc;
         this.loaiTrangPhuc = loaiTrangPhuc;
@@ -51,12 +58,10 @@ public class TrangPhuc {
         this.mauSac = mauSac;
         this.giaThue = giaThue;
         this.giaGoc = giaGoc;
+        this.soLuong = soLuong;
         this.trangThai = trangThai;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "trang_thai")
-    private TrangPhucStatus trangThai;
 
     public Long getId() {
         return id;
@@ -120,6 +125,14 @@ public class TrangPhuc {
 
     public void setTrangThai(TrangPhucStatus trangThai) {
         this.trangThai = trangThai;
+    }
+
+    public Integer getSoLuong() {
+        return soLuong;
+    }
+
+    public void setSoLuong(Integer soLuong) {
+        this.soLuong = soLuong;
     }
 
     
