@@ -62,21 +62,28 @@ public class GioHangService {
 
     @Transactional
     public void addToCart(Long khachHangId, Long trangPhucId){
+        TrangPhuc tp = trangPhucRepository.findById(trangPhucId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy trang phục"));
+
         GioHang cart = getOrCreate(khachHangId);
         ChiTietGioHang chiTietGioHang = chiTietGioHangRepository.findByGioHangIdAndTrangPhucId(cart.getId(), trangPhucId)
                                                                 .orElse(null);
+        
         if(chiTietGioHang == null){
             chiTietGioHang = new ChiTietGioHang();
             chiTietGioHang.setGioHangId(cart.getId());
             chiTietGioHang.setTrangPhucId(trangPhucId);
+            chiTietGioHang.setSoLuong(1);
         }
         else{
+            if (chiTietGioHang.getSoLuong() >= tp.getSoLuong()) {
+                 throw new RuntimeException("So luong da dat muc toi da trong gio hang");
+            }
             chiTietGioHang.setSoLuong(chiTietGioHang.getSoLuong() + 1);
         }
         chiTietGioHangRepository.save(chiTietGioHang);
 
         cart.setNgayCapNhat(LocalDate.now());
-
         repository.save(cart);
         log.info("Da them trang phuc {} vao gio hang khach {}", trangPhucId, khachHangId);
     }

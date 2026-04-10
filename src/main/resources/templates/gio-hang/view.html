@@ -59,8 +59,8 @@
     <p th:if="${#maps.isEmpty(items)}" style="color:#f00909ee; margin-top:10px;">Giỏ hàng trống.</p>
     
     <div class="mt" style="display: flex; gap: 10px;">
-        <a th:if="${!#maps.isEmpty(items)}" href="/phieu-thue/tao" class="btn btn-primary">Tiến hành đặt cọc</a>
         <a href="/trang-phuc" class="btn btn-secondary">Tiếp tục chọn trang phục</a>
+        <a th:if="${!#maps.isEmpty(items)}" href="/phieu-thue/tao" class="btn">Tiến hành đặt cọc</a>
     </div>
 </div>
 </body>

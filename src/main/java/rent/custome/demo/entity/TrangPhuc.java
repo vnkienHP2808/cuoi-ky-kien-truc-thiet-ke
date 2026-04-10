@@ -40,7 +40,7 @@ public class TrangPhuc {
     private Double giaGoc;
 
     @Column(name = "so_luong")
-    private Integer soLuong;
+    private Integer soLuong = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai")
