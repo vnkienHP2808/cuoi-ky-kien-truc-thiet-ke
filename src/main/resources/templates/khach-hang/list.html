@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Danh sách khách hàng</h1>
+
+    <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
+    <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
+
+    <a href="/khach-hang/them" class="btn btn-primary">+ Thêm khách hàng</a>
+
+    <table style="margin-top:14px;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Mã KH</th>
+                <th>Họ tên</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>SĐT</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="kh, s : ${khachHangs}">
+                <td th:text="${s.count}"></td>
+                <td th:text="'KH-' + ${kh.id}"></td>
+                <td th:text="${kh.hoTen}"></td>
+                <td th:text="${kh.username}"></td>
+                <td th:text="${kh.email}"></td>
+                <td th:text="${kh.soDienThoai}"></td>
+                <td>
+                    <a th:href="@{/khach-hang/{id}(id=${kh.id})}" class="btn">Chi tiết</a>
+                    <a th:href="@{/khach-hang/{id}/sua(id=${kh.id})}" class="btn">Sửa</a>
+                    <a th:href="@{/gio-hang/{id}(id=${kh.id})}" class="btn">Giỏ hàng</a>
+                    <a th:href="@{/phieu-thue/khach-hang/{id}(id=${kh.id})}" class="btn">Phiếu thuê</a>
+                    <form class="inline" th:action="@{/khach-hang/{id}/xoa(id=${kh.id})}" method="post"
+                          onsubmit="return confirm('Xóa khách hàng này?')">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(khachHangs)}">
+                <td colspan="7" style="text-align:center;">Chưa có khách hàng nào</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

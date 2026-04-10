@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Có lỗi xảy ra</h1>
+    <div class="msg-err" th:text="${error}">Lỗi không xác định</div>
+    <a href="/" class="btn">Về trang chủ</a>
+</div>
+</body>
+</html>

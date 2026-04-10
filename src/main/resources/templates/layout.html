@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:fragment="head">
+    <meta charset="UTF-8"/>
+    <title>Thuê Trang Phục</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+        nav { background: #222; padding: 10px 24px; display: flex; gap: 20px; align-items: center; }
+        nav a { color: #ddd; text-decoration: none; font-size: 14px; }
+        nav a:hover { color: #fff; text-decoration: underline; }
+        nav .brand { color: #fff; font-weight: bold; font-size: 16px; margin-right: 10px; }
+        nav .spacer { flex: 1; }
+        nav .user-info { color: #aaa; font-size: 13px; }
+        nav .user-info strong { color: #fff; }
+        .container { padding: 24px; max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 20px; margin: 0 0 16px; }
+        h2 { font-size: 16px; margin: 12px 0 8px; }
+        table { border-collapse: collapse; width: 100%; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; font-size: 14px; }
+        th { background: #f0f0f0; font-weight: bold; }
+        tr:hover td { background: #fafafa; }
+        a.btn, button.btn {
+            display: inline-block; padding: 5px 12px; font-size: 13px;
+            border: 1px solid #666; background: #fff; cursor: pointer;
+            text-decoration: none; color: #222; margin: 2px 1px;
+        }
+        a.btn:hover, button.btn:hover { background: #eee; }
+        .btn-primary { background: #222; color: #fff !important; border-color: #222; }
+        .btn-primary:hover { background: #444; }
+        .btn-danger { color: #900 !important; border-color: #900; }
+        .btn-danger:hover { background: #fff0f0; }
+        .msg-ok  { padding: 10px 14px; background: #efffef; border: 1px solid #5a5; margin-bottom: 14px; font-size: 14px; }
+        .msg-err { padding: 10px 14px; background: #fff0f0; border: 1px solid #a55; margin-bottom: 14px; font-size: 14px; }
+        .form-wrap { max-width: 480px; background: #fff; padding: 20px; border: 1px solid #ddd; }
+        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 3px; }
+        input[type=text], input[type=password], input[type=email],
+        input[type=date], input[type=number], select, textarea {
+            width: 100%; padding: 6px 8px; border: 1px solid #bbb;
+            font-size: 14px; margin-bottom: 4px;
+        }
+        .field-err { color: #900; font-size: 12px; margin-bottom: 8px; display: block; }
+        .form-group { margin-bottom: 12px; }
+        .badge { display: inline-block; padding: 2px 7px; font-size: 12px; border: 1px solid; }
+        .AVAILABLE    { border-color: #4a4; color: #4a4; }
+        .RENTED       { border-color: #a60; color: #a60; }
+        .UNAVAILABLE  { border-color: #a00; color: #a00; }
+        .CHO_XU_LY    { border-color: #666; color: #666; }
+        .CHO_XAC_NHAN { border-color: #07a; color: #07a; }
+        .DA_XAC_NHAN  { border-color: #4a4; color: #4a4; }
+        .DA_HUY       { border-color: #a00; color: #a00; }
+        form.inline { display: inline; }
+        .mt { margin-top: 16px; }
+        details { border: 1px solid #ccc; padding: 10px; margin-top: 12px; max-width: 420px; background: #fff; }
+        summary { cursor: pointer; font-weight: bold; font-size: 14px; }
+    </style>
+</head>
+<body>
+<nav th:fragment="nav">
+    <span class="brand">Thuê Trang Phục</span>
+    <a href="/trang-phuc">Trang phục</a>
+    <th:block th:if="${session.khachHang != null}">
+        <a href="/gio-hang">Giỏ hàng</a>
+        <a href="/phieu-thue/cua-toi">Phiếu thuê của tôi</a>
+    </th:block>
+    <a href="/khach-hang">Quản lý KH</a>
+    <a href="/phieu-thue">Tất cả phiếu</a>
+    <span class="spacer"></span>
+    <th:block th:if="${session.khachHang != null}">
+        <span class="user-info">Xin chào, <strong th:text="${session.khachHang.hoTen}"></strong></span>
+        <form class="inline" action="/dang-xuat" method="post">
+            <button type="submit" class="btn" style="color:#ddd;border-color:#666;">Đăng xuất</button>
+        </form>
+    </th:block>
+    <th:block th:if="${session.khachHang == null}">
+        <a href="/dang-nhap">Đăng nhập</a>
+        <a href="/dang-ky">Đăng ký</a>
+    </th:block>
+</nav>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Chi tiết khách hàng</h1>
+
+    <table style="max-width:500px;">
+        <tr><th>Mã KH</th>        <td th:text="'KH-' + ${kh.id}"></td></tr>
+        <tr><th>Họ tên</th>       <td th:text="${kh.hoTen}"></td></tr>
+        <tr><th>Username</th>     <td th:text="${kh.username}"></td></tr>
+        <tr><th>Email</th>        <td th:text="${kh.email}"></td></tr>
+        <tr><th>SĐT</th>          <td th:text="${kh.soDienThoai}"></td></tr>
+        <tr><th>Địa chỉ</th>      <td th:text="${kh.diaChi}"></td></tr>
+        <tr><th>Ngày sinh</th>    <td th:text="${kh.dob}"></td></tr>
+    </table>
+
+    <div class="mt">
+        <a th:href="@{/khach-hang/{id}/sua(id=${kh.id})}" class="btn">Sửa</a>
+        <a th:href="@{/gio-hang/{id}(id=${kh.id})}" class="btn">Xem giỏ hàng</a>
+        <a th:href="@{/phieu-thue/khach-hang/{id}(id=${kh.id})}" class="btn">Phiếu thuê</a>
+        <a href="/khach-hang" class="btn">Quay lại</a>
+    </div>
+</div>
+</body>
+</html>

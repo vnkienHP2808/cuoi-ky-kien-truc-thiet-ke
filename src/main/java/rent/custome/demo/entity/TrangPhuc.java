@@ -1,0 +1,126 @@
+package rent.custome.demo.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import rent.custome.demo.enums.TrangPhucStatus;
+
+@Entity
+@Table(name = "trang_phuc")
+public class TrangPhuc {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "ten_trang_phuc")
+    private String tenTrangPhuc;
+    
+    @ManyToOne
+    @JoinColumn(name = "loai_trang_phuc_id")
+    private LoaiTrangPhuc loaiTrangPhuc;
+
+
+    @Column(name = "kich_thuoc")
+    private String kichThuoc;
+
+    @Column(name = "mau_sac")
+    private String mauSac;
+
+    @Column(name = "gia_thue")
+    private Double giaThue;
+
+    @Column(name = "gia_goc")
+    private Double giaGoc;
+
+    public TrangPhuc() {
+    }
+
+    public TrangPhuc(Long id, String tenTrangPhuc, LoaiTrangPhuc loaiTrangPhuc, String kichThuoc, String mauSac,
+            Double giaThue, Double giaGoc, TrangPhucStatus trangThai) {
+        this.id = id;
+        this.tenTrangPhuc = tenTrangPhuc;
+        this.loaiTrangPhuc = loaiTrangPhuc;
+        this.kichThuoc = kichThuoc;
+        this.mauSac = mauSac;
+        this.giaThue = giaThue;
+        this.giaGoc = giaGoc;
+        this.trangThai = trangThai;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trang_thai")
+    private TrangPhucStatus trangThai;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTenTrangPhuc() {
+        return tenTrangPhuc;
+    }
+
+    public void setTenTrangPhuc(String tenTrangPhuc) {
+        this.tenTrangPhuc = tenTrangPhuc;
+    }
+
+    public LoaiTrangPhuc getLoaiTrangPhuc() {
+        return loaiTrangPhuc;
+    }
+
+    public void setLoaiTrangPhuc(LoaiTrangPhuc loaiTrangPhuc) {
+        this.loaiTrangPhuc = loaiTrangPhuc;
+    }
+
+    public String getKichThuoc() {
+        return kichThuoc;
+    }
+
+    public void setKichThuoc(String kichThuoc) {
+        this.kichThuoc = kichThuoc;
+    }
+
+    public String getMauSac() {
+        return mauSac;
+    }
+
+    public void setMauSac(String mauSac) {
+        this.mauSac = mauSac;
+    }
+
+    public Double getGiaThue() {
+        return giaThue;
+    }
+
+    public void setGiaThue(Double giaThue) {
+        this.giaThue = giaThue;
+    }
+
+    public Double getGiaGoc() {
+        return giaGoc;
+    }
+
+    public void setGiaGoc(Double giaGoc) {
+        this.giaGoc = giaGoc;
+    }
+
+    public TrangPhucStatus getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(TrangPhucStatus trangThai) {
+        this.trangThai = trangThai;
+    }
+
+    
+}
