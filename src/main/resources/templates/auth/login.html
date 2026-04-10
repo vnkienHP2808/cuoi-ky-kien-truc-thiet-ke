@@ -9,8 +9,7 @@
     <div class="msg-err" th:if="${error}" th:text="${error}"></div>
 
     <div class="form-wrap">
-        <form th:action="@{/dang-nhap}" th:object="${form != null ? form : #request.getAttribute('form')}"
-              method="post">
+        <form th:action="@{/dang-nhap}" method="post">
             <div class="form-group">
                 <label>Username</label>
                 <input type="text" name="username" required/>
@@ -19,11 +18,8 @@
                 <label>Password</label>
                 <input type="password" name="password" required/>
             </div>
-            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+            <button type="submit" class="btn">Đăng nhập</button>
         </form>
-        <p style="margin-top:12px; font-size:13px;">
-            Chưa có tài khoản? <a href="/dang-ky">Đăng ký ngay</a>
-        </p>
     </div>
 </div>
 </body>

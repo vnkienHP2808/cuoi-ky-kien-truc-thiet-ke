@@ -24,12 +24,20 @@ public class KhachHangDto {
 
     private String diaChi;
     private String dob;
+
+    private String role;
     
     public String getHoTen() {
         return hoTen;
     }
     public void setHoTen(String hoTen) {
         this.hoTen = hoTen;
+    }
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
     }
     public String getUsername() {
         return username;

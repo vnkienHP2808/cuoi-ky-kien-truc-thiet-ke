@@ -9,7 +9,7 @@
     <div class="msg-err" th:if="${error}" th:text="${error}"></div>
 
     <div class="form-wrap">
-        <form th:action="${isEdit} ? @{/khach-hang/{id}/sua(id=${khachHangId})} : @{/khach-hang/them}"
+        <form th:action="${isEdit} ? @{/admin/{id}/sua(id=${khachHangId})} : @{/admin/them}"
               th:object="${form}" method="post">
 
             <div class="form-group">
@@ -54,7 +54,7 @@
 
             <button type="submit" class="btn"
                     th:text="${isEdit} ? 'Cập nhật' : 'Thêm mới'">Lưu</button>
-            <a href="/khach-hang" class="btn">Hủy</a>
+            <a href="/admin" class="btn">Hủy</a>
         </form>
     </div>
 </div>

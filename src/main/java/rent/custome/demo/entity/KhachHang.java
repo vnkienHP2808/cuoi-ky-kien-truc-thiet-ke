@@ -50,17 +50,24 @@ public class KhachHang {
 
     @Column(name = "dob")
     private String dob;
-    
-    public KhachHang(Long id, String hoTen, String password, String email, String soDienThoai, String diaChi) {
+
+    @Column(name = "role")
+    private String role;
+
+    public KhachHang() {
+    }
+
+    public KhachHang(Long id, String hoTen, String username, String password, String email, String soDienThoai,
+            String diaChi, String dob, String role) {
         this.id = id;
         this.hoTen = hoTen;
+        this.username = username;
         this.password = password;
         this.email = email;
         this.soDienThoai = soDienThoai;
         this.diaChi = diaChi;
-    }
-
-    public KhachHang() {
+        this.dob = dob;
+        this.role = role;
     }
 
     public Long getId() {
@@ -109,5 +116,15 @@ public class KhachHang {
 
     public void setDiaChi(String diaChi) {
         this.diaChi = diaChi;
-    } 
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+    
+    
 }

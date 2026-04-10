@@ -69,4 +69,17 @@ public class KhachHangService {
         if (!repo.existsById(id)) throw new RuntimeException("Khong tim thay khach hang co id=" + id);
         repo.deleteById(id);
     }
+
+    public KhachHang login(String username, String password){
+        log.info("Xử lý đăng nhập vào hệ thống");
+        KhachHang kh = repo.findByUsername(username)
+                            .orElseThrow(() -> new RuntimeException("Username không đúng"));
+        
+        if(!kh.getPassword().equals(password)){
+            throw new RuntimeException("Mật khẩu không đúng");
+        }
+
+        log.info("Đăng nhập thành công: username={}", username);
+        return kh;
+    }
 }
