@@ -57,14 +57,10 @@
 </head>
 <body>
 <nav th:fragment="nav">
-    <span class="brand">Thuê Trang Phục</span>
-    <a href="/trang-phuc">Trang phục</a>
+    <span class="brand">Hệ thống thuê trang phục</span>
     <th:block th:if="${session.khachHang != null}">
         <a href="/gio-hang">Giỏ hàng</a>
-        <a href="/phieu-thue/cua-toi">Phiếu thuê của tôi</a>
     </th:block>
-    <a href="/khach-hang">Quản lý KH</a>
-    <a href="/phieu-thue">Tất cả phiếu</a>
     <span class="spacer"></span>
     <th:block th:if="${session.khachHang != null}">
         <span class="user-info">Xin chào, <strong th:text="${session.khachHang.hoTen}"></strong></span>
@@ -74,7 +70,6 @@
     </th:block>
     <th:block th:if="${session.khachHang == null}">
         <a href="/dang-nhap">Đăng nhập</a>
-        <a href="/dang-ky">Đăng ký</a>
     </th:block>
 </nav>
 </body>
