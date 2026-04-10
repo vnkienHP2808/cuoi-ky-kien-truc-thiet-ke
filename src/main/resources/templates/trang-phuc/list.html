@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Danh sách trang phục</h1>
+    <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
+    <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Mã</th>
+                <th>Tên trang phục</th>
+                <th>Loại</th>
+                <th>Kích thước</th>
+                <th>Màu sắc</th>
+                <th>Giá thuê</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="tp, s : ${trangPhucs}">
+                <td th:text="${s.count}"></td>
+                <td th:text="'TP-' + ${tp.id}"></td>
+                <td th:text="${tp.tenTrangPhuc}"></td>
+                <td th:text="${tp.loaiTrangPhuc?.tenLoaiTrangPhuc}"></td>
+                <td th:text="${tp.kichThuoc}"></td>
+                <td th:text="${tp.mauSac}"></td>
+                <td th:text="${#numbers.formatDecimal(tp.giaThue, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
+                <td>
+                    <span class="badge" th:classappend="${tp.trangThai.name()}"
+                          th:text="${tp.trangThai.name() == 'AVAILABLE' ? 'Còn hàng' :
+                                     tp.trangThai.name() == 'RENTED'    ? 'Đang thuê' : 'Không có'}">
+                    </span>
+                </td>
+                <td>
+                    <a th:href="@{/trang-phuc/{id}(id=${tp.id})}" class="btn">Chi tiết</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(trangPhucs)}">
+                <td colspan="9" style="text-align:center;">Chưa có trang phục nào</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

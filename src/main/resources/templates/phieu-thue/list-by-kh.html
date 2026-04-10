@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Phiếu thuê của tôi</h1>
+    <p>Khách hàng: <strong th:text="${kh.hoTen}"></strong></p>
+    <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
+    <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Mã phiếu</th>
+                <th>Ngày tạo</th>
+                <th>Ngày lấy</th>
+                <th>Ngày trả</th>
+                <th>Hình thức</th>
+                <th>Trạng thái</th>
+                <th>Tiền cọc</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="pt, s : ${phieus}">
+                <td th:text="${s.count}"></td>
+                <td th:text="'PT-' + ${pt.id}"></td>
+                <td th:text="${pt.ngayTao}"></td>
+                <td th:text="${pt.ngayHenLay}"></td>
+                <td th:text="${pt.ngayHenTra}"></td>
+                <td th:text="${pt.hinhThuc}"></td>
+                <td>
+                    <span class="badge" th:classappend="${pt.trangThai.name()}"
+                          th:text="${pt.trangThai.name() == 'CHO_XU_LY'    ? 'Chờ xử lý'  :
+                                     pt.trangThai.name() == 'CHO_XAC_NHAN' ? 'Chờ xác nhận' :
+                                     pt.trangThai.name() == 'DA_XAC_NHAN'  ? 'Đã xác nhận' : 'Đã hủy'}">
+                    </span>
+                </td>
+                <td th:text="${#numbers.formatDecimal(pt.tienDatCoc, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
+                <td>
+                    <a th:href="@{/phieu-thue/{id}(id=${pt.id})}" class="btn">Chi tiết</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(phieus)}">
+                <td colspan="9" style="text-align:center;">Bạn chưa có phiếu thuê nào</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="mt">
+        <a href="/gio-hang" class="btn btn-primary">Vào giỏ hàng</a>
+        <a href="/trang-phuc" class="btn">Xem trang phục</a>
+    </div>
+</div>
+</body>
+</html>

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import jakarta.servlet.http.HttpSession;
+import rent.custome.demo.entity.KhachHang;
 
 
 @Controller
@@ -11,9 +12,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(HttpSession session) {
-        if (session.getAttribute("khachHang") != null) {
-            return "redirect:/admin";
-        }
-        return "redirect:/dang-nhap";
+        KhachHang kh = (KhachHang)session.getAttribute("khachHang");
+        if(kh == null) return "redirect:/dang-nhap";
+        return "admin".equals(kh.getRole()) ? "redirect:/admin" : "redirect:/trang-phuc";
     }
 }

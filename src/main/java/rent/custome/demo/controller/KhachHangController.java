@@ -1,7 +1,5 @@
 package rent.custome.demo.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -23,8 +21,6 @@ import org.springframework.validation.BindingResult;
 @Controller
 @RequestMapping("/admin")
 public class KhachHangController {
-    private static final Logger log = LoggerFactory.getLogger(KhachHangController.class);
-    
     private final KhachHangService service;
 
     public KhachHangController(KhachHangService service) {

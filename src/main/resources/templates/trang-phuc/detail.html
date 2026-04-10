@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Chi tiết trang phục</h1>
+    <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
+    <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
+    <table style="max-width:520px;">
+        <tr><th>Mã</th>          <td th:text="'TP-' + ${tp.id}"></td></tr>
+        <tr><th>Tên</th>         <td th:text="${tp.tenTrangPhuc}"></td></tr>
+        <tr><th>Loại</th>        <td th:text="${tp.loaiTrangPhuc?.tenLoaiTrangPhuc}"></td></tr>
+        <tr><th>Kích thước</th>  <td th:text="${tp.kichThuoc}"></td></tr>
+        <tr><th>Màu sắc</th>     <td th:text="${tp.mauSac}"></td></tr>
+        <tr><th>Giá thuê</th>    <td th:text="${#numbers.formatDecimal(tp.giaThue, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td></tr>
+        <tr><th>Giá gốc</th>     <td th:text="${#numbers.formatDecimal(tp.giaGoc, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td></tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>
+                <span class="badge" th:classappend="${tp.trangThai.name()}"
+                      th:text="${tp.trangThai.name() == 'AVAILABLE' ? 'Còn hàng' :
+                                 tp.trangThai.name() == 'RENTED'    ? 'Đang thuê' : 'Không có'}">
+                </span>
+            </td>
+        </tr>
+    </table>
+    <div class="mt">
+        <th:block th:if="${khachHang != null and tp.trangThai.name() == 'AVAILABLE'}">
+            <form class="inline" th:action="@{/gio-hang/them/{id}(id=${tp.id})}" method="post">
+                <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+            </form>
+        </th:block>
+        <th:block th:if="${khachHang == null}">
+            <a href="/dang-nhap" class="btn btn-primary">Đăng nhập để thêm vào giỏ</a>
+        </th:block>
+        <th:block th:if="${khachHang != null and tp.trangThai.name() != 'AVAILABLE'}">
+            <span style="color:#a00; font-size:13px;">Trang phục hiện không khả dụng</span>
+        </th:block>
+        <a href="/trang-phuc" class="btn" style="margin-left:6px;">Quay lại</a>
+    </div>
+</div>
+</body>
+</html>

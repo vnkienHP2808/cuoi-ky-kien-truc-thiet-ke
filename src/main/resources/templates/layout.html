@@ -58,15 +58,28 @@
 <body>
 <nav th:fragment="nav">
     <span class="brand">Hệ thống thuê trang phục</span>
-    <th:block th:if="${session.khachHang != null}">
-        <a th:if="${session.khachHang.role == 'customer'}" href="/gio-hang">Giỏ hàng</a>
+
+    <!-- Menu cho CUSTOMER -->
+    <th:block th:if="${session.khachHang != null and session.khachHang.role != 'admin'}">
+        <a href="/trang-phuc">Trang phục</a>
+        <a href="/gio-hang">Giỏ hàng</a>
+        <a href="/phieu-thue/cua-toi">Phiếu thuê của tôi</a>
     </th:block>
+
     <span class="spacer"></span>
+
     <th:block th:if="${session.khachHang != null}">
-        <span class="user-info">Xin chào, <strong th:text="${session.khachHang.hoTen}"></strong></span>
+        <span class="user-info">
+            Xin chào, <strong th:text="${session.khachHang.hoTen}"></strong>
+            <span th:if="${session.khachHang.role == 'admin'}" style="color:#f90;font-size:11px;"> [Admin]</span>
+        </span>
         <form class="inline" action="/dang-xuat" method="post">
             <button type="submit" class="btn" style="border-color:#666;">Đăng xuất</button>
         </form>
+    </th:block>
+
+    <th:block th:if="${session.khachHang == null}">
+        <a href="/dang-nhap">Đăng nhập</a>
     </th:block>
 </nav>
 </body>

@@ -21,8 +21,6 @@ public class GioHangController {
     private final GioHangService gioHangService;
     private final KhachHangService khachHangService;
 
-    
-
     public GioHangController(GioHangService gioHangService, KhachHangService khachHangService) {
         this.gioHangService = gioHangService;
         this.khachHangService = khachHangService;

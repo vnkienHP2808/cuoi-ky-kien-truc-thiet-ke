@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<nav th:replace="~{layout :: nav}"></nav>
+<div class="container">
+    <h1>Giỏ hàng của tôi</h1>
+    <p>Khách hàng: <strong th:text="${kh.hoTen}"></strong></p>
+    <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
+    <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
+    <table th:if="${!#lists.isEmpty(items)}">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Mã</th>
+                <th>Tên trang phục</th>
+                <th>Loại</th>
+                <th>Kích thước</th>
+                <th>Màu sắc</th>
+                <th>Giá thuê</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="tp, s : ${items}">
+                <td th:text="${s.count}"></td>
+                <td th:text="'TP-' + ${tp.id}"></td>
+                <td th:text="${tp.tenTrangPhuc}"></td>
+                <td th:text="${tp.loaiTrangPhuc?.tenLoaiTrangPhuc}"></td>
+                <td th:text="${tp.kichThuoc}"></td>
+                <td th:text="${tp.mauSac}"></td>
+                <td th:text="${#numbers.formatDecimal(tp.giaThue, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
+                <td>
+                    <form class="inline"
+                          th:action="@{/gio-hang/xoa/{tpId}(tpId=${tp.id})}"
+                          method="post"
+                          onsubmit="return confirm('Xóa khỏi giỏ hàng?')">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr th:with="total=${#aggregates.sum(items.![giaThue])}">
+                <td colspan="6" style="text-align:right; font-weight:bold;">Tổng giá thuê:</td>
+                <td th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+    <p th:if="${#lists.isEmpty(items)}" style="color:#666; margin-top:10px;">Giỏ hàng trống.</p>
+    <div class="mt" th:if="${!#lists.isEmpty(items)}">
+        <a href="/phieu-thue/tao" class="btn btn-primary">Đặt thuê</a>
+    </div>
+    <div class="mt">
+        <a href="/trang-phuc" class="btn">Tiếp tục chọn trang phục</a>
+    </div>
+</div>
+</body>
+</html>
