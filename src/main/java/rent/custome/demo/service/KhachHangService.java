@@ -44,6 +44,7 @@ public class KhachHangService {
         kh.setSoDienThoai(dto.getSoDienThoai());
         kh.setDiaChi(dto.getDiaChi());
         kh.setDob(dto.getDob());
+        kh.setRole(dto.getRole() != null && !dto.getRole().isBlank() ? dto.getRole() : "customer");
 
         return repo.save(kh);
     }
@@ -60,6 +61,9 @@ public class KhachHangService {
         kh.setSoDienThoai(dto.getSoDienThoai());
         kh.setDiaChi(dto.getDiaChi());
         kh.setDob(dto.getDob());
+        if (dto.getRole() != null && !dto.getRole().isBlank()) {
+            kh.setRole(dto.getRole());
+        }
 
         return repo.save(kh);
     }
@@ -71,7 +75,7 @@ public class KhachHangService {
     }
 
     public KhachHang login(String username, String password){
-        log.info("Xử lý đăng nhập vào hệ thống");
+        log.info("Nguoi dung username={} muon dang nhap vao he thong", username);
         KhachHang kh = repo.findByUsername(username)
                             .orElseThrow(() -> new RuntimeException("Username không đúng"));
         
@@ -79,7 +83,7 @@ public class KhachHangService {
             throw new RuntimeException("Mật khẩu không đúng");
         }
 
-        log.info("Đăng nhập thành công: username={}", username);
+        log.info("Dang nhap thanh cong: username={}", username);
         return kh;
     }
 }

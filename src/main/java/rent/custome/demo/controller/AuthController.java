@@ -1,13 +1,12 @@
 package rent.custome.demo.controller;
 
-import org.springframework.boot.context.properties.bind.BindResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +17,9 @@ import rent.custome.demo.service.KhachHangService;
 
 @Controller
 public class AuthController {
+
+ private static final Logger log = LoggerFactory.getLogger(KhachHangService.class);
+
     private final KhachHangService service;
 
     public AuthController(KhachHangService service) {
@@ -49,6 +51,7 @@ public class AuthController {
     @PostMapping("/dang-xuat")
     public String logout(HttpSession session){
         session.invalidate();
+        log.info("Nguoi dung da dang xuat khoi he thong");
         return "redirect:/dang-nhap";
     }
 }

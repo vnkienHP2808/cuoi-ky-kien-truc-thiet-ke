@@ -59,7 +59,7 @@
 <nav th:fragment="nav">
     <span class="brand">Hệ thống thuê trang phục</span>
     <th:block th:if="${session.khachHang != null}">
-        <a href="/gio-hang">Giỏ hàng</a>
+        <a th:if="${session.khachHang.role == 'customer'}" href="/gio-hang">Giỏ hàng</a>
     </th:block>
     <span class="spacer"></span>
     <th:block th:if="${session.khachHang != null}">

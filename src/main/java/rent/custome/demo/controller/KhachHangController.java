@@ -93,6 +93,7 @@ public class KhachHangController {
         form.setSoDienThoai(kh.getSoDienThoai());
         form.setDiaChi(kh.getDiaChi());
         form.setDob(kh.getDob());
+        form.setRole(kh.getRole());
 
         model.addAttribute("form", form);
         model.addAttribute("khachHangId", id);
@@ -131,6 +132,4 @@ public class KhachHangController {
         }
         return "redirect:/admin";
     }
-
-    
 }

@@ -20,6 +20,7 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>SĐT</th>
+                <th>Vai trò</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
@@ -32,16 +33,27 @@
                 <td th:text="${kh.email}"></td>
                 <td th:text="${kh.soDienThoai}"></td>
                 <td>
+                    <span th:if="${kh.role == 'admin'}" style="color:#c0392b;font-weight:bold;">Admin</span>
+                    <span th:if="${kh.role != 'admin'}" style="color:#2980b9;">Khách hàng</span>
+                </td>
+                <td>
                     <a th:href="@{/admin/{id}(id=${kh.id})}" class="btn">Chi tiết</a>
                     <a th:href="@{/admin/{id}/sua(id=${kh.id})}" class="btn">Sửa</a>
                     <form class="inline" th:action="@{/admin/{id}/xoa(id=${kh.id})}" method="post"
-                          onsubmit="return confirm('Xóa khách hàng này?')">
-                        <button type="submit" class="btn btn-danger">Xóa</button>
+                                onsubmit="return confirm('Xóa khách hàng này?')">
+                        
+                        <button type="submit" 
+                                class="btn btn-danger"
+                                th:disabled="${kh.role == 'admin'}"
+                                th:style="${kh.role == 'admin'} ? 'cursor: not-allowed; opacity: 0.5;' : ''"
+                                th:title="${kh.role == 'admin'} ? 'Không thể xóa tài khoản Admin' : 'Xóa'">
+                            Xóa
+                        </button>
                     </form>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(khachHangs)}">
-                <td colspan="7" style="text-align:center;">Chưa có khách hàng nào</td>
+                <td colspan="8" style="text-align:center;">Chưa có khách hàng nào</td>
             </tr>
         </tbody>
     </table>
