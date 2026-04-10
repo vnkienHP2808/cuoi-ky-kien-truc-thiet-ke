@@ -9,7 +9,7 @@
     <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
     <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
 
-    <a href="/khach-hang/them" class="btn btn-primary">+ Thêm khách hàng</a>
+    <a href="/khach-hang/them" class="btn">+ Thêm khách hàng</a>
 
     <table style="margin-top:14px;">
         <thead>
@@ -34,8 +34,6 @@
                 <td>
                     <a th:href="@{/khach-hang/{id}(id=${kh.id})}" class="btn">Chi tiết</a>
                     <a th:href="@{/khach-hang/{id}/sua(id=${kh.id})}" class="btn">Sửa</a>
-                    <a th:href="@{/gio-hang/{id}(id=${kh.id})}" class="btn">Giỏ hàng</a>
-                    <a th:href="@{/phieu-thue/khach-hang/{id}(id=${kh.id})}" class="btn">Phiếu thuê</a>
                     <form class="inline" th:action="@{/khach-hang/{id}/xoa(id=${kh.id})}" method="post"
                           onsubmit="return confirm('Xóa khách hàng này?')">
                         <button type="submit" class="btn btn-danger">Xóa</button>
