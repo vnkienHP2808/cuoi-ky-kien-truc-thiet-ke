@@ -132,7 +132,7 @@ public class KhachHangController {
     }
 
     @PostMapping("/{id}/sua")
-    public String update(@Valid @ModelAttribute KhachHangDto form, BindingResult br, @PathVariable Long id, Model model, RedirectAttributes ra){
+    public String update(@Valid @ModelAttribute("form") KhachHangDto form, BindingResult br, @PathVariable Long id, Model model, RedirectAttributes ra){
         if (br.hasErrors()) {
             model.addAttribute("isEdit", true);
             return "admin/form";

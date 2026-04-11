@@ -58,8 +58,9 @@
     <div>
         <form class="inline"
               th:if="${pt.trangThai.name() == 'CHO_XU_LY' and pt.trangThaiDatCoc.name() == 'CHUA_THANH_TOAN'}"
-              th:action="@{/phieu-thue/{id}/dat-coc(id=${pt.id})}" method="post">
-            <button type="submit" class="btn btn-primary">Xác nhận đặt cọc</button>
+              th:action="@{/phieu-thue/{id}/dat-coc(id=${pt.id})}" method="post"
+              onsubmit="return confirm('Xác nhận đặt cọc?')">
+            <button type="submit" class="btn">Xác nhận đặt cọc</button>
         </form>
         <form class="inline"
               th:if="${pt.trangThai.name() != 'DA_HUY'}"

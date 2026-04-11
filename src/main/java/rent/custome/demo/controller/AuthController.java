@@ -46,7 +46,7 @@ public class AuthController {
             return kh.getRole().equals("admin") ? "redirect:/admin" : "redirect:/trang-phuc";
 
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Đăng nhập thất bại");
+            ra.addFlashAttribute("error", "Tài khoản hoặc mật khẩu không đúng");
             return "redirect:/dang-nhap";
         }
     }

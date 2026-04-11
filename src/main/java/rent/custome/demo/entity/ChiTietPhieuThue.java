@@ -27,8 +27,7 @@ public class ChiTietPhieuThue {
     @Column(name = "don_gia", nullable = false)
     private Double donGia;
 
-    public ChiTietPhieuThue(Long id, Long phieuThueId, Long trangPhucId, Integer soLuong, Double donGia) {
-        this.id = id;
+    public ChiTietPhieuThue(Long phieuThueId, Long trangPhucId, Integer soLuong, Double donGia) {
         this.phieuThueId = phieuThueId;
         this.trangPhucId = trangPhucId;
         this.soLuong = soLuong;
