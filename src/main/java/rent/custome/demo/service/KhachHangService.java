@@ -45,6 +45,7 @@ public class KhachHangService {
         kh.setDiaChi(dto.getDiaChi());
         kh.setDob(dto.getDob());
         kh.setRole(dto.getRole() != null && !dto.getRole().isBlank() ? dto.getRole() : "customer");
+        kh.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
 
         return repo.save(kh);
     }
@@ -64,14 +65,19 @@ public class KhachHangService {
         if (dto.getRole() != null && !dto.getRole().isBlank()) {
             kh.setRole(dto.getRole());
         }
+        if (dto.getIsActive() != null) {
+            kh.setIsActive(dto.getIsActive());
+        }
 
         return repo.save(kh);
     }
 
-    public void delete(Long id){
-        log.info("Xoa khach hang id={}", id);
-        if (!repo.existsById(id)) throw new RuntimeException("Khong tim thay khach hang co id=" + id);
-        repo.deleteById(id);
+    public void toggleTrangThai(Long id){
+        log.info("Doi trang thai khach hang id={}", id);
+        KhachHang kh = repo.findById(id).orElseThrow(
+            () -> new RuntimeException("Khong tim thay khach hang co id=" + id));
+        kh.setIsActive(!Boolean.TRUE.equals(kh.getIsActive()));
+        repo.save(kh);
     }
 
     public KhachHang login(String username, String password){

@@ -14,6 +14,13 @@
         <tr><th>SĐT</th>          <td th:text="${kh.soDienThoai}"></td></tr>
         <tr><th>Địa chỉ</th>      <td th:text="${kh.diaChi}"></td></tr>
         <tr><th>Ngày sinh</th>    <td th:text="${kh.dob}"></td></tr>
+        <tr>
+            <th>Trạng thái</th>
+            <td>
+                <span th:if="${kh.isActive}" style="color:#27ae60;font-weight:bold;">Hoạt động</span>
+                <span th:if="${!kh.isActive}" style="color:#c0392b;font-weight:bold;">Bị khóa</span>
+            </td>
+        </tr>
     </table>
 
     <div class="mt">

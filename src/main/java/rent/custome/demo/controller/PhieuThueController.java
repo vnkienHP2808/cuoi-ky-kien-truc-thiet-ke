@@ -1,6 +1,5 @@
 package rent.custome.demo.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -151,7 +149,7 @@ public class PhieuThueController {
         }
 
         if (!phieuThue.getKhachHangId().equals(kh.getId()) && !"admin".equals(kh.getRole())) {
-            ra.addFlashAttribute("error", "Bạn không thể xóa phiếu thuê này"); 
+            ra.addFlashAttribute("error", "Bạn không thể hủy phiếu thuê này"); 
             return "redirect:/phieu-thue/cua-toi";
         }
 

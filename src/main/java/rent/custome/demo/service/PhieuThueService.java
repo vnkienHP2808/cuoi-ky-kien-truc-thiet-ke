@@ -129,7 +129,7 @@ public class PhieuThueService {
     public void huyPhieu(Long phieuThueId){
         PhieuThue phieuThue = repository.findById(phieuThueId).orElse(null);
         if(phieuThue == null){
-            throw new RuntimeException("Phiêu thuê trang phục không tồn tại");
+            throw new RuntimeException("Phiếu thuê trang phục không tồn tại");
         }
 
         phieuThue.setTrangThai(PhieuThueStatus.DA_HUY);
@@ -138,6 +138,13 @@ public class PhieuThueService {
         }
         
         repository.save(phieuThue);
+
+        for(ChiTietPhieuThue chiTiet : phieuThue.getChiTiet()){
+            trangPhucRepository.findById(chiTiet.getTrangPhucId()).ifPresent(trangPhuc -> {
+                trangPhuc.setSoLuong(trangPhuc.getSoLuong() + chiTiet.getSoLuong());
+                trangPhucRepository.save(trangPhuc);
+            });
+        }
 
         log.info("Da huy phieu thue " + phieuThueId + "thanh cong");
     }

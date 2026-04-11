@@ -12,6 +12,10 @@
         <form th:action="${isEdit} ? @{/admin/{id}/sua(id=${khachHangId})} : @{/admin/them}"
               th:object="${form}" method="post">
 
+            <div class="msg-err" th:if="${#fields.hasAnyErrors()}">
+                Vui lòng nhập đầy đủ và đúng các trường bắt buộc (*)
+            </div>
+
             <div class="form-group">
                 <label>Họ tên *</label>
                 <input type="text" th:field="*{hoTen}"/>
@@ -70,6 +74,18 @@
                     <option value="customer">Khách hàng</option>
                     <option value="admin">Admin</option>
                 </select>
+            </div>
+
+            <div class="form-group" th:if="${isEdit}">
+                <label>Trạng thái tài khoản</label>
+                <select th:field="*{isActive}"
+                        th:disabled="${form.role == 'admin'}"
+                        th:style="${form.role == 'admin'} ? 'pointer-events: none; background-color: #e9ecef;' : ''">
+                    <option value="true">Hoạt động</option>
+                    <option value="false">Bị khóa</option>
+                </select>
+                <!-- hidden field để đảm bảo giá trị vẫn submit khi select bị disabled -->
+                <input th:if="${form.role == 'admin'}" type="hidden" th:field="*{isActive}"/>
             </div>
 
             <button type="submit" class="btn"

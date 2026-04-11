@@ -23,13 +23,24 @@ public class KhachHangDto {
     private String soDienThoai;
 
     private String diaChi;
+
     private String dob;
 
     private String role;
+
+    private Boolean isActive;
     
     public String getHoTen() {
         return hoTen;
     }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public void setHoTen(String hoTen) {
         this.hoTen = hoTen;
     }

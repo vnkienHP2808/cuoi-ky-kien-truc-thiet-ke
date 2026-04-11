@@ -59,8 +59,9 @@ public class KhachHangController {
     }
 
     @PostMapping("/them")
-    public String create(@Valid @ModelAttribute KhachHangDto form, BindingResult br, Model model, RedirectAttributes ra){
+    public String create(@Valid @ModelAttribute("form") KhachHangDto form, BindingResult br, Model model, RedirectAttributes ra){
         if (br.hasErrors()) {
+            model.addAttribute("form", form);   
             model.addAttribute("isEdit", false);
             return "admin/form";
         }
@@ -69,6 +70,7 @@ public class KhachHangController {
             service.create(form);
             ra.addFlashAttribute("success", "Tạo mới khách hàng thành công");
         } catch (Exception e) {
+            model.addAttribute("form", form);
             model.addAttribute("isEdit", false);
             model.addAttribute("error", e.getMessage());
             return "admin/form";
@@ -123,6 +125,7 @@ public class KhachHangController {
         form.setDiaChi(kh.getDiaChi());
         form.setDob(kh.getDob());
         form.setRole(kh.getRole());
+        form.setIsActive(kh.getIsActive());
 
         model.addAttribute("form", form);
         model.addAttribute("khachHangId", id);
@@ -134,6 +137,7 @@ public class KhachHangController {
     @PostMapping("/{id}/sua")
     public String update(@Valid @ModelAttribute("form") KhachHangDto form, BindingResult br, @PathVariable Long id, Model model, RedirectAttributes ra){
         if (br.hasErrors()) {
+            model.addAttribute("form", form);
             model.addAttribute("khachHangId", id);
             model.addAttribute("isEdit", true);
             return "admin/form";
@@ -141,9 +145,10 @@ public class KhachHangController {
 
         try {
             service.update(id, form);
-            ra.addFlashAttribute("success", "Cập nhập thông tin khách hàng id={}'" + id + "'thành công");
+            ra.addFlashAttribute("success", "Cập nhập thông tin khách hàng " + id + " thành công");
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("form", form);   
             model.addAttribute("isEdit", true);
             model.addAttribute("khachHangId", id);
             return "admin/form";
@@ -152,11 +157,11 @@ public class KhachHangController {
         return "redirect:/admin";
     }
 
-    @PostMapping("/{id}/xoa")
-    public String delete(@PathVariable Long id, Model model, RedirectAttributes ra){
+    @PostMapping("/{id}/doi-trang-thai")
+    public String toggleTrangThai(@PathVariable Long id, RedirectAttributes ra){
         try {
-            service.delete(id);
-            ra.addFlashAttribute("success", "Đã xóa khách hàng thành công");
+            service.toggleTrangThai(id);
+            ra.addFlashAttribute("success", "Đã đổi trạng thái tài khoản thành công");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }

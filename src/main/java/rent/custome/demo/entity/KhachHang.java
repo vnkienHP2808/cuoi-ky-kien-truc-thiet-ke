@@ -54,6 +54,9 @@ public class KhachHang {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     public KhachHang() {
     }
 
@@ -68,6 +71,7 @@ public class KhachHang {
         this.diaChi = diaChi;
         this.dob = dob;
         this.role = role;
+        this.isActive = true;
     }
 
     public Long getId() {
@@ -124,6 +128,14 @@ public class KhachHang {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
     
     

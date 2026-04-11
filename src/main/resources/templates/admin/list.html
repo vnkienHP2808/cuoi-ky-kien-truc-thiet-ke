@@ -21,6 +21,7 @@
                 <th>Email</th>
                 <th>SĐT</th>
                 <th>Vai trò</th>
+                <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
@@ -37,23 +38,26 @@
                     <span th:if="${kh.role != 'admin'}" style="color:#2980b9;">Khách hàng</span>
                 </td>
                 <td>
+                    <span th:if="${kh.isActive}" style="color:#27ae60;font-weight:bold;">Hoạt động</span>
+                    <span th:if="${!kh.isActive}" style="color:#c0392b;">Bị khóa</span>
+                </td>
+                <td>
                     <a th:href="@{/admin/{id}(id=${kh.id})}" class="btn">Chi tiết</a>
                     <a th:href="@{/admin/{id}/sua(id=${kh.id})}" class="btn">Sửa</a>
-                    <form class="inline" th:action="@{/admin/{id}/xoa(id=${kh.id})}" method="post"
-                                onsubmit="return confirm('Xóa khách hàng này?')">
-                        
-                        <button type="submit" 
-                                class="btn btn-danger"
+                    <form class="inline" th:action="@{/admin/{id}/doi-trang-thai(id=${kh.id})}" method="post"
+                                th:onsubmit="${kh.isActive} ? 'return confirm(\'Khóa tài khoản này?\')' : 'return confirm(\'Mở khóa tài khoản này?\')'">
+                        <button type="submit"
+                                th:class="${kh.isActive} ? 'btn btn-danger' : 'btn btn-success'"
                                 th:disabled="${kh.role == 'admin'}"
                                 th:style="${kh.role == 'admin'} ? 'cursor: not-allowed; opacity: 0.5;' : ''"
-                                th:title="${kh.role == 'admin'} ? 'Không thể xóa tài khoản Admin' : 'Xóa'">
-                            Xóa
+                                th:title="${kh.role == 'admin'} ? 'Không thể thay đổi trạng thái tài khoản Admin' : ''"
+                                th:text="${kh.isActive} ? 'Khóa' : 'Mở khóa'">
                         </button>
                     </form>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(khachHangs)}">
-                <td colspan="8" style="text-align:center;">Chưa có khách hàng nào</td>
+                <td colspan="9" style="text-align:center;">Chưa có khách hàng nào</td>
             </tr>
         </tbody>
     </table>
