@@ -11,22 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import rent.custome.demo.dto.CreateOrderRequest;
-import rent.custome.demo.entity.ChiTietGioHang;
-import rent.custome.demo.entity.ChiTietPhieuThue;
-import rent.custome.demo.entity.GioHang;
-import rent.custome.demo.entity.PhieuThue;
-import rent.custome.demo.entity.TrangPhuc;
+import rent.custome.demo.entity.*;
 import rent.custome.demo.enums.HinhThucThue;
 import rent.custome.demo.enums.PhieuThueStatus;
 import rent.custome.demo.enums.TrangPhucStatus;
 import rent.custome.demo.enums.TrangThaiDatCoc;
-import rent.custome.demo.repository.ChiTietGioHangRepository;
-import rent.custome.demo.repository.GioHangRepository;
-import rent.custome.demo.repository.PhieuThueRepository;
-import rent.custome.demo.repository.TrangPhucRepository;
+import rent.custome.demo.repository.*;
 
 @Service
 public class PhieuThueService {
+
     private static final Logger log = LoggerFactory.getLogger(PhieuThueService.class);
 
     private final PhieuThueRepository repository;
@@ -34,31 +28,37 @@ public class PhieuThueService {
     private final ChiTietGioHangRepository chiTietGioHangRepository;
     private final TrangPhucRepository trangPhucRepository;
 
-    public PhieuThueService(PhieuThueRepository repository, GioHangRepository gioHangRepository,
-            ChiTietGioHangRepository chiTietGioHangRepository, TrangPhucRepository trangPhucRepository) {
+    public PhieuThueService(PhieuThueRepository repository,
+                            GioHangRepository gioHangRepository,
+                            ChiTietGioHangRepository chiTietGioHangRepository,
+                            TrangPhucRepository trangPhucRepository) {
         this.repository = repository;
         this.gioHangRepository = gioHangRepository;
         this.chiTietGioHangRepository = chiTietGioHangRepository;
         this.trangPhucRepository = trangPhucRepository;
     }
 
-    public Optional<PhieuThue> findById(Long phieuThueId){
-        return repository.findById(phieuThueId);
+    public Optional<PhieuThue> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public List<PhieuThue> findByKhachHangId(Long khachHangId) {
+        return repository.findByKhachHangId(khachHangId);
     }
 
     @Transactional
-    public PhieuThue createFromCart(Long khachHangId, CreateOrderRequest req){
-        log.info("Yeu cau tao phieu thue cho khach hang khachHangId={}", khachHangId);
+    public PhieuThue createFromCart(Long khachHangId, CreateOrderRequest req) {
+        log.info("Tao phieu thue cho khachHangId={}", khachHangId);
 
         if (!req.getNgayHenTra().isAfter(req.getNgayHenLay())) {
             throw new RuntimeException("Ngày hẹn trả phải sau ngày hẹn lấy");
         }
 
         GioHang cart = gioHangRepository.findByKhachHangId(khachHangId)
-                                        .orElseThrow(() -> new RuntimeException("Giỏ hàng trống, hãy thêm trang phục trước"));
+                .orElseThrow(() -> new RuntimeException("Giỏ hàng trống, hãy thêm trang phục trước"));
 
         List<ChiTietGioHang> cartItems = chiTietGioHangRepository.findByGioHangId(cart.getId());
-        if(cartItems.isEmpty()){
+        if (cartItems.isEmpty()) {
             throw new RuntimeException("Giỏ hàng trống, hãy thêm trang phục trước");
         }
 
@@ -74,82 +74,71 @@ public class PhieuThueService {
         phieuThue.setChiTiet(new ArrayList<>());
 
         int cnt = 0;
-        for(ChiTietGioHang cartItem : cartItems){
-            TrangPhuc trangPhuc = trangPhucRepository.findById(cartItem.getTrangPhucId()).orElse(null);
-
-            if(trangPhuc != null && trangPhuc.getSoLuong() > 0 && trangPhuc.getTrangThai() == TrangPhucStatus.SAN_HANG){
+        for (ChiTietGioHang item : cartItems) {
+            TrangPhuc tp = trangPhucRepository.findById(item.getTrangPhucId()).orElse(null);
+            if (tp != null && tp.getSoLuong() > 0 && tp.getTrangThai() == TrangPhucStatus.SAN_HANG) {
                 phieuThue.getChiTiet().add(
-                    new ChiTietPhieuThue(phieuThue.getId(),
-                                        trangPhuc.getId(),
-                                        cartItem.getSoLuong(),
-                                        cartItem.getSoLuong()*trangPhuc.getGiaThue()));
-                    int instock = trangPhuc.getSoLuong()-cartItem.getSoLuong();
-                    trangPhuc.setSoLuong(instock);
-                    if(instock == 0) trangPhuc.setTrangThai(TrangPhucStatus.KHONG_CON_HANG);
-                    trangPhucRepository.save(trangPhuc);
-                    cnt++;
+                    new ChiTietPhieuThue(phieuThue.getId(), tp.getId(),
+                                        item.getSoLuong(), item.getSoLuong() * tp.getGiaThue()));
+                int conLai = tp.getSoLuong() - item.getSoLuong();
+                tp.setSoLuong(conLai);
+                if (conLai == 0) tp.setTrangThai(TrangPhucStatus.KHONG_CON_HANG);
+                trangPhucRepository.save(tp);
+                cnt++;
             }
         }
 
-        if(cnt == 0){
-            throw new RuntimeException("Tất cả trang phục trong giỏ đã bị người khác thuê mất");
-        }
+        if (cnt == 0) throw new RuntimeException("Tất cả trang phục trong giỏ đã hết hàng");
 
-        double tienDatCoc = phieuThue.getChiTiet().stream()
-                            .mapToDouble(ct -> ct.getDonGia() != null ? ct.getDonGia() : 0).sum() * 0.3;
+        double tienCoc = phieuThue.getChiTiet().stream()
+                .mapToDouble(ct -> ct.getDonGia() != null ? ct.getDonGia() : 0).sum() * 0.3;
+        phieuThue.setTienDatCoc(tienCoc);
 
-        phieuThue.setTienDatCoc(tienDatCoc);
         PhieuThue saved = repository.save(phieuThue);
         chiTietGioHangRepository.deleteAll(cartItems);
-
         cart.setNgayCapNhat(LocalDate.now());
         gioHangRepository.save(cart);
 
-        log.info("Tao phieu thue thanh cong: id={}", saved.getId());
-
+        log.info("Tao phieu thue thanh cong id={}", saved.getId());
         return saved;
     }
 
-    public void datCoc(Long phieuThueId){
-        PhieuThue phieuThue = repository.findById(phieuThueId).orElse(null);
-
-        if(phieuThue == null){
-            throw new RuntimeException("Phiếu thuê trang phục không tồn tại");
-        }
-
-        phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.DA_THANH_TOAN);
-        phieuThue.setTrangThai(PhieuThueStatus.CHO_XAC_NHAN);
+    /**
+     * STATE PATTERN: Service chỉ gọi phieuThue.datCoc() —
+     * logic chuyển trạng thái nằm trong ChoXuLyState.
+     */
+    @Transactional
+    public void datCoc(Long phieuThueId) {
+        PhieuThue phieuThue = findOrThrow(phieuThueId);
+        phieuThue.datCoc(); // ủy quyền cho State
         repository.save(phieuThue);
-
-        log.info("Da dat coc tien thue thanh cong");
+        log.info("Dat coc phieu {} thanh cong", phieuThueId);
     }
 
-    public void huyPhieu(Long phieuThueId){
-        PhieuThue phieuThue = repository.findById(phieuThueId).orElse(null);
-        if(phieuThue == null){
-            throw new RuntimeException("Phiếu thuê trang phục không tồn tại");
-        }
+    /**
+     * STATE PATTERN: Hủy phiếu — State tự quyết định có hoàn cọc không.
+     */
+    @Transactional
+    public void huyPhieu(Long phieuThueId) {
+        PhieuThue phieuThue = findOrThrow(phieuThueId);
+        phieuThue.huy(); // ủy quyền cho State
 
-        phieuThue.setTrangThai(PhieuThueStatus.DA_HUY);
-        if(phieuThue.getTrangThaiDatCoc() == TrangThaiDatCoc.DA_THANH_TOAN){
-            phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.DA_HOAN_TRA);
-        }
-
-        repository.save(phieuThue);
-
-        for(ChiTietPhieuThue chiTiet : phieuThue.getChiTiet()){
-            trangPhucRepository.findById(chiTiet.getTrangPhucId()).ifPresent(trangPhuc -> {
-                trangPhuc.setSoLuong(trangPhuc.getSoLuong() + chiTiet.getSoLuong());
-                trangPhucRepository.save(trangPhuc);
+        // Hoàn tồn kho khi hủy
+        for (ChiTietPhieuThue ct : phieuThue.getChiTiet()) {
+            trangPhucRepository.findById(ct.getTrangPhucId()).ifPresent(tp -> {
+                tp.setSoLuong(tp.getSoLuong() + ct.getSoLuong());
+                if (tp.getTrangThai() == TrangPhucStatus.KHONG_CON_HANG)
+                    tp.setTrangThai(TrangPhucStatus.SAN_HANG);
+                trangPhucRepository.save(tp);
             });
         }
 
-        log.info("Da huy phieu thue " + phieuThueId + " thanh cong");
+        repository.save(phieuThue);
+        log.info("Huy phieu {} thanh cong", phieuThueId);
     }
 
-    public List<PhieuThue> findByKhachHangId(Long khachHangId){
-        List<PhieuThue> phieus = repository.findByKhachHangId(khachHangId);
-        log.info("Lay thanh cong tat ca phieu thue cua khach hang id={}", khachHangId);
-        return phieus;
+    private PhieuThue findOrThrow(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu thuê id=" + id));
     }
 }
