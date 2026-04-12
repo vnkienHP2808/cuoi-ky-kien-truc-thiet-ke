@@ -18,9 +18,8 @@
             <th>Trạng thái</th>
             <td>
                 <span class="badge" th:classappend="${pt.trangThai.name()}"
-                      th:text="${pt.trangThai.name() == 'CHO_XU_LY'    ? 'Chờ xử lý'  :
-                                 pt.trangThai.name() == 'CHO_XAC_NHAN' ? 'Chờ xác nhận' :
-                                 pt.trangThai.name() == 'DA_XAC_NHAN'  ? 'Đã xác nhận' : 'Đã hủy'}">
+                      th:text="${pt.trangThai.name() == 'CHO_DAT_COC'  ? 'Chờ đặt cọc'  :
+                                 pt.trangThai.name() == 'CHO_XAC_NHAN' ? 'Chờ xác nhận' : 'Đã hủy'}">
                 </span>
             </td>
         </tr>
@@ -57,7 +56,7 @@
     </table>
     <div>
         <form class="inline"
-              th:if="${pt.trangThai.name() == 'CHO_XU_LY' and pt.trangThaiDatCoc.name() == 'CHUA_THANH_TOAN'}"
+              th:if="${pt.trangThai.name() == 'CHO_DAT_COC'}"
               th:action="@{/phieu-thue/{id}/dat-coc(id=${pt.id})}" method="post"
               onsubmit="return confirm('Xác nhận đặt cọc?')">
             <button type="submit" class="btn">Xác nhận đặt cọc</button>

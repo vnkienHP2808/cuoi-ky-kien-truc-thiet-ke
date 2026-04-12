@@ -34,8 +34,6 @@ public class PhieuThueService {
     private final ChiTietGioHangRepository chiTietGioHangRepository;
     private final TrangPhucRepository trangPhucRepository;
 
-    
-
     public PhieuThueService(PhieuThueRepository repository, GioHangRepository gioHangRepository,
             ChiTietGioHangRepository chiTietGioHangRepository, TrangPhucRepository trangPhucRepository) {
         this.repository = repository;
@@ -47,7 +45,6 @@ public class PhieuThueService {
     public Optional<PhieuThue> findById(Long phieuThueId){
         return repository.findById(phieuThueId);
     }
-
 
     @Transactional
     public PhieuThue createFromCart(Long khachHangId, CreateOrderRequest req){
@@ -64,14 +61,14 @@ public class PhieuThueService {
         if(cartItems.isEmpty()){
             throw new RuntimeException("Giỏ hàng trống, hãy thêm trang phục trước");
         }
-        
+
         PhieuThue phieuThue = new PhieuThue();
         phieuThue.setKhachHangId(khachHangId);
         phieuThue.setNgayTao(LocalDate.now());
         phieuThue.setNgayHenLay(req.getNgayHenLay());
         phieuThue.setNgayHenTra(req.getNgayHenTra());
         phieuThue.setHinhThuc(HinhThucThue.ONLINE);
-        phieuThue.setTrangThai(PhieuThueStatus.CHO_XU_LY);
+        phieuThue.setTrangThai(PhieuThueStatus.CHO_DAT_COC);
         phieuThue.setTienDatCoc(0.0);
         phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.CHUA_THANH_TOAN);
         phieuThue.setChiTiet(new ArrayList<>());
@@ -82,7 +79,7 @@ public class PhieuThueService {
 
             if(trangPhuc != null && trangPhuc.getSoLuong() > 0 && trangPhuc.getTrangThai() == TrangPhucStatus.SAN_HANG){
                 phieuThue.getChiTiet().add(
-                    new ChiTietPhieuThue(phieuThue.getId(), 
+                    new ChiTietPhieuThue(phieuThue.getId(),
                                         trangPhuc.getId(),
                                         cartItem.getSoLuong(),
                                         cartItem.getSoLuong()*trangPhuc.getGiaThue()));
@@ -94,13 +91,13 @@ public class PhieuThueService {
             }
         }
 
-        if(cnt ==0){
+        if(cnt == 0){
             throw new RuntimeException("Tất cả trang phục trong giỏ đã bị người khác thuê mất");
         }
 
         double tienDatCoc = phieuThue.getChiTiet().stream()
                             .mapToDouble(ct -> ct.getDonGia() != null ? ct.getDonGia() : 0).sum() * 0.3;
-        
+
         phieuThue.setTienDatCoc(tienDatCoc);
         PhieuThue saved = repository.save(phieuThue);
         chiTietGioHangRepository.deleteAll(cartItems);
@@ -121,6 +118,7 @@ public class PhieuThueService {
         }
 
         phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.DA_THANH_TOAN);
+        phieuThue.setTrangThai(PhieuThueStatus.CHO_XAC_NHAN);
         repository.save(phieuThue);
 
         log.info("Da dat coc tien thue thanh cong");
@@ -136,7 +134,7 @@ public class PhieuThueService {
         if(phieuThue.getTrangThaiDatCoc() == TrangThaiDatCoc.DA_THANH_TOAN){
             phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.DA_HOAN_TRA);
         }
-        
+
         repository.save(phieuThue);
 
         for(ChiTietPhieuThue chiTiet : phieuThue.getChiTiet()){
@@ -146,14 +144,12 @@ public class PhieuThueService {
             });
         }
 
-        log.info("Da huy phieu thue " + phieuThueId + "thanh cong");
+        log.info("Da huy phieu thue " + phieuThueId + " thanh cong");
     }
 
     public List<PhieuThue> findByKhachHangId(Long khachHangId){
         List<PhieuThue> phieus = repository.findByKhachHangId(khachHangId);
-
         log.info("Lay thanh cong tat ca phieu thue cua khach hang id={}", khachHangId);
-
         return phieus;
     }
 }
