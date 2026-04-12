@@ -10,9 +10,7 @@
         nav a { color: #ddd; text-decoration: none; font-size: 14px; }
         nav a:hover { color: #fff; text-decoration: underline; }
         nav .brand { color: #fff; font-weight: bold; font-size: 16px; margin-right: 10px; }
-        nav .spacer { flex: 1; }
-        nav .user-info { color: #aaa; font-size: 13px; }
-        nav .user-info strong { color: #fff; }
+        nav .separator { color: #555; }
         .container { padding: 24px; max-width: 1100px; margin: 0 auto; }
         h1 { font-size: 20px; margin: 0 0 16px; }
         h2 { font-size: 16px; margin: 12px 0 8px; }
@@ -42,11 +40,11 @@
         .field-err { color: #900; font-size: 12px; margin-bottom: 8px; display: block; }
         .form-group { margin-bottom: 12px; }
         .badge { display: inline-block; padding: 2px 7px; font-size: 12px; border: 1px solid; }
-        .SAN_HANG    { border-color: #4a4; color: #4a4; }
+        .SAN_HANG       { border-color: #4a4; color: #4a4; }
         .KHONG_CON_HANG { border-color: #a00; color: #a00; }
-        .CHO_DAT_COC  { border-color: #e67e00; color: #e67e00; }
-        .CHO_XAC_NHAN { border-color: #07a; color: #07a; }       
-        .DA_HUY       { border-color: #a00; color: #a00; }
+        .CHO_DAT_COC    { border-color: #e67e00; color: #e67e00; }
+        .CHO_XAC_NHAN   { border-color: #07a; color: #07a; }
+        .DA_HUY         { border-color: #a00; color: #a00; }
         form.inline { display: inline; }
         .mt { margin-top: 16px; }
         details { border: 1px solid #ccc; padding: 10px; margin-top: 12px; max-width: 420px; background: #fff; }
@@ -57,28 +55,15 @@
 <nav th:fragment="nav">
     <span class="brand">Hệ thống thuê trang phục</span>
 
-    <!-- Menu cho CUSTOMER -->
-    <th:block th:if="${session.khachHang != null and session.khachHang.role != 'admin'}">
-        <a href="/trang-phuc">Trang phục</a>
-        <a href="/gio-hang">Giỏ hàng</a>
-        <a href="/phieu-thue/cua-toi">Phiếu thuê của tôi</a>
-    </th:block>
+    <a href="/admin">Quản lý khách hàng</a>
 
-    <span class="spacer"></span>
+    <span class="separator">|</span>
+    <a href="/trang-phuc">Trang phục</a>
 
-    <th:block th:if="${session.khachHang != null}">
-        <span class="user-info">
-            Xin chào, <strong th:text="${session.khachHang.hoTen}"></strong>
-            <span th:if="${session.khachHang.role == 'admin'}" style="color:#f90;font-size:11px;"> [Admin]</span>
-        </span>
-        <form class="inline" action="/dang-xuat" method="post">
-            <button type="submit" class="btn" style="border-color:#666;">Đăng xuất</button>
-        </form>
-    </th:block>
+    <a th:href="@{/gio-hang}">Giỏ hàng</a>
 
-    <th:block th:if="${session.khachHang == null}">
-        <a href="/dang-nhap">Đăng nhập</a>
-    </th:block>
+    <a th:href="@{/phieu-thue/cua-toi}">Phiếu thuê</a>
+
 </nav>
 </body>
 </html>

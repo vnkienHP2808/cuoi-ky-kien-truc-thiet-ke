@@ -23,7 +23,8 @@
                 </span>
             </td>
         </tr>
-        <tr><th>Tiền đặt cọc</th>
+        <tr>
+            <th>Tiền đặt cọc</th>
             <td th:text="${#numbers.formatDecimal(pt.tienDatCoc, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
         </tr>
         <tr>
@@ -33,6 +34,7 @@
             </td>
         </tr>
     </table>
+
     <h2>Danh sách trang phục</h2>
     <table style="margin-bottom:18px;">
         <thead>
@@ -54,20 +56,23 @@
             </tr>
         </tbody>
     </table>
+
     <div>
         <form class="inline"
               th:if="${pt.trangThai.name() == 'CHO_DAT_COC'}"
-              th:action="@{/phieu-thue/{id}/dat-coc(id=${pt.id})}" method="post"
+              th:action="@{/phieu-thue/{id}/dat-coc(id=${pt.id})}"
+              method="post"
               onsubmit="return confirm('Xác nhận đặt cọc?')">
-            <button type="submit" class="btn">Xác nhận đặt cọc</button>
+            <button type="submit" class="btn btn-primary">Xác nhận đặt cọc</button>
         </form>
         <form class="inline"
               th:if="${pt.trangThai.name() != 'DA_HUY'}"
-              th:action="@{/phieu-thue/{id}/huy(id=${pt.id})}" method="post"
+              th:action="@{/phieu-thue/{id}/huy(id=${pt.id})}"
+              method="post"
               onsubmit="return confirm('Hủy phiếu thuê này?')">
             <button type="submit" class="btn btn-danger">Hủy phiếu</button>
         </form>
-        <a href="/phieu-thue/cua-toi" class="btn">Phiếu thuê của tôi</a>
+        <a th:href="@{/phieu-thue/cua-toi}" class="btn">Phiếu thuê của tôi</a>
     </div>
 </div>
 </body>

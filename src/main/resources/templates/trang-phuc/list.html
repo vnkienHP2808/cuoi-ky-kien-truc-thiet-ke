@@ -38,11 +38,12 @@
                     </span>
                 </td>
                 <td>
-                    <a th:href="@{/trang-phuc/{id}(id=${tp.id})}" class="btn">Chi tiết</a>
+                    <a th:href="@{/trang-phuc/{id}(id=${tp.id})}"
+                       class="btn">Chi tiết</a>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(trangPhucs)}">
-                <td colspan="9" style="text-align:center;">Chưa có trang phục nào</td>
+                <td colspan="10" style="text-align:center;">Chưa có trang phục nào</td>
             </tr>
         </tbody>
     </table>

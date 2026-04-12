@@ -1,16 +1,16 @@
 package rent.custome.demo.controller;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.annotation.RequireRole;
+import rent.custome.demo.config.AppConfig;
 import rent.custome.demo.dto.CreateOrderRequest;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.entity.PhieuThue;
+import rent.custome.demo.repository.KhachHangRepository;
 import rent.custome.demo.repository.TrangPhucRepository;
 import rent.custome.demo.service.PhieuThueService;
 
@@ -20,55 +20,79 @@ public class PhieuThueController {
 
     private final PhieuThueService service;
     private final TrangPhucRepository trangPhucRepository;
+    private final KhachHangRepository khachHangRepository;
+    private final AppConfig appConfig;
 
-    public PhieuThueController(PhieuThueService service, TrangPhucRepository trangPhucRepository) {
+    public PhieuThueController(PhieuThueService service,
+                                TrangPhucRepository trangPhucRepository,
+                                KhachHangRepository khachHangRepository,
+                                AppConfig appConfig) {
         this.service = service;
         this.trangPhucRepository = trangPhucRepository;
+        this.khachHangRepository = khachHangRepository;
+        this.appConfig = appConfig;
     }
 
+    // ── Tạo phiếu thuê ──────────────────────────────────────────────
+
     @GetMapping("/tao")
-    @RequireRole("customer")
-    public String showCreateForm(HttpSession session, Model model) {
-        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+    public String showCreateForm(Model model) {
+        Long khachHangId = appConfig.getKhachHangId();
+        KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
         model.addAttribute("req", new CreateOrderRequest());
+        model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/tao";
     }
 
     @PostMapping("/tao")
-    @RequireRole("customer")
-    public String create(HttpSession session,
-                         @Valid @ModelAttribute("req") CreateOrderRequest req,
+    public String create(@Valid @ModelAttribute("req") CreateOrderRequest req,
                          BindingResult br, Model model, RedirectAttributes ra) {
-        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
-        if (br.hasErrors()) { model.addAttribute("kh", kh); return "phieu-thue/tao"; }
+        Long khachHangId = appConfig.getKhachHangId();
+        KhachHang kh = findKhOrThrow(khachHangId);
+        if (br.hasErrors()) {
+            model.addAttribute("kh", kh);
+            model.addAttribute("selectedKhachHangId", khachHangId);
+            return "phieu-thue/tao";
+        }
         try {
-            PhieuThue pt = service.createFromCart(kh.getId(), req);
+            PhieuThue pt = service.createFromCart(khachHangId, req);
             ra.addFlashAttribute("success", "Đã tạo phiếu thuê #" + pt.getId());
             return "redirect:/phieu-thue/" + pt.getId();
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("kh", kh);
+            model.addAttribute("selectedKhachHangId", khachHangId);
             return "phieu-thue/tao";
         }
     }
 
+    // ── Danh sách phiếu của khách ────────────────────────────────────
+
     @GetMapping("/cua-toi")
-    @RequireRole("customer")
-    public String showListPhieuThue(HttpSession session, Model model) {
-        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+    public String showListPhieuThue(Model model) {
+        Long khachHangId = appConfig.getKhachHangId();
+        KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
-        model.addAttribute("phieus", service.findByKhachHangId(kh.getId()));
+        model.addAttribute("phieus", service.findByKhachHangId(khachHangId));
+        model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/list-by-kh";
     }
 
+    // ── Đặt cọc ──────────────────────────────────────────────────────
+
     @PostMapping("/{id}/dat-coc")
-    @RequireRole("customer")
-    public String datCoc(HttpSession session, @PathVariable Long id, RedirectAttributes ra) {
-        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+    public String datCoc(@PathVariable Long id, RedirectAttributes ra) {
+        Long khachHangId = appConfig.getKhachHangId();
         PhieuThue pt = service.findById(id).orElse(null);
-        if (pt == null) { ra.addFlashAttribute("error", "Không tìm thấy phiếu"); return "redirect:/phieu-thue/cua-toi"; }
-        if (!pt.getKhachHangId().equals(kh.getId())) { ra.addFlashAttribute("error", "Bạn không có quyền thao tác phiếu này"); return "redirect:/phieu-thue/cua-toi"; }
+        if (pt == null) {
+            ra.addFlashAttribute("error", "Không tìm thấy phiếu");
+            return "redirect:/phieu-thue/cua-toi";
+        }
+        if (!pt.getKhachHangId().equals(khachHangId)) {
+            ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
+            return "redirect:/phieu-thue/cua-toi";
+        }
         try {
             service.datCoc(id);
             ra.addFlashAttribute("success", "Đặt cọc thành công. Vui lòng đến lấy đúng hẹn");
@@ -78,13 +102,20 @@ public class PhieuThueController {
         return "redirect:/phieu-thue/" + id;
     }
 
+    // ── Hủy phiếu ────────────────────────────────────────────────────
+
     @PostMapping("/{id}/huy")
-    @RequireRole("customer")
-    public String huyPhieu(HttpSession session, @PathVariable Long id, RedirectAttributes ra) {
-        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+    public String huyPhieu(@PathVariable Long id, RedirectAttributes ra) {
+        Long khachHangId = appConfig.getKhachHangId();
         PhieuThue pt = service.findById(id).orElse(null);
-        if (pt == null) { ra.addFlashAttribute("error", "Không tìm thấy phiếu"); return "redirect:/phieu-thue/cua-toi"; }
-        if (!pt.getKhachHangId().equals(kh.getId())) { ra.addFlashAttribute("error", "Bạn không có quyền hủy phiếu này"); return "redirect:/phieu-thue/cua-toi"; }
+        if (pt == null) {
+            ra.addFlashAttribute("error", "Không tìm thấy phiếu");
+            return "redirect:/phieu-thue/cua-toi";
+        }
+        if (!pt.getKhachHangId().equals(khachHangId)) {
+            ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
+            return "redirect:/phieu-thue/cua-toi";
+        }
         try {
             service.huyPhieu(id);
             ra.addFlashAttribute("success", "Đã hủy phiếu thành công");
@@ -94,27 +125,34 @@ public class PhieuThueController {
         return "redirect:/phieu-thue/" + id;
     }
 
+    // ── Chi tiết phiếu ───────────────────────────────────────────────
 
     @GetMapping("/{id}")
-    @RequireRole("customer")
-    public String detail(HttpSession session, @PathVariable Long id,
-                         Model model, RedirectAttributes ra) {
-        KhachHang kh = (KhachHang) session.getAttribute("khachHang");
+    public String detail(@PathVariable Long id, Model model, RedirectAttributes ra) {
+        Long khachHangId = appConfig.getKhachHangId();
         PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu thuê");
             return "redirect:/phieu-thue/cua-toi";
         }
-
-        if (!pt.getKhachHangId().equals(kh.getId())) {
-            ra.addFlashAttribute("error", "Bạn không có quyền xem phiếu này");
+        if (!pt.getKhachHangId().equals(khachHangId)) {
+            ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
             return "redirect:/phieu-thue/cua-toi";
         }
+        KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
         model.addAttribute("pt", pt);
         model.addAttribute("trangPhucs", pt.getChiTiet().stream()
                 .map(ct -> trangPhucRepository.findById(ct.getTrangPhucId()).orElse(null))
                 .toList());
+        model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/detail";
+    }
+
+    // ── Helper ───────────────────────────────────────────────────────
+
+    private KhachHang findKhOrThrow(Long id) {
+        return khachHangRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng id=" + id));
     }
 }

@@ -22,3 +22,6 @@ server:
 logging:
   level:
     rent.custome.demo: INFO
+
+app:
+  khach-hang-id: 6

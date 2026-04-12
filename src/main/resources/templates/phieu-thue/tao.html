@@ -8,7 +8,8 @@
     <p>Khách hàng: <strong th:text="${kh.hoTen}"></strong></p>
     <div class="msg-err" th:if="${error}" th:text="${error}"></div>
     <div class="form-wrap">
-        <form th:action="@{/phieu-thue/tao}" th:object="${req}" method="post">
+        <form th:action="@{/phieu-thue/tao}"
+              th:object="${req}" method="post">
             <div class="form-group">
                 <label>Ngày hẹn lấy *</label>
                 <input type="date" th:field="*{ngayHenLay}"/>
@@ -19,9 +20,8 @@
                 <input type="date" th:field="*{ngayHenTra}"/>
                 <span class="field-err" th:if="${#fields.hasErrors('ngayHenTra')}" th:errors="*{ngayHenTra}"></span>
             </div>
-
-            <a href="/gio-hang" class="btn">Quay lại giỏ hàng</a>
-            <button type="submit" class="btn">Xác nhận đặt thuê</button>
+            <a th:href="@{/gio-hang}" class="btn">Quay lại giỏ hàng</a>
+            <button type="submit" class="btn btn-primary">Xác nhận đặt thuê</button>
         </form>
     </div>
     <p style="margin-top:14px; color:#666; font-size:13px;">

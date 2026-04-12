@@ -38,7 +38,8 @@
                 </td>
                 <td th:text="${#numbers.formatDecimal(pt.tienDatCoc, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
                 <td>
-                    <a th:href="@{/phieu-thue/{id}(id=${pt.id})}" class="btn">Chi tiết</a>
+                    <a th:href="@{/phieu-thue/{id}(id=${pt.id})}"
+                       class="btn">Chi tiết</a>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(phieus)}">
@@ -47,8 +48,8 @@
         </tbody>
     </table>
     <div class="mt">
-        <a href="/gio-hang" class="btn">Vào giỏ hàng</a>
-        <a href="/trang-phuc" class="btn">Xem trang phục</a>
+        <a th:href="@{/gio-hang}" class="btn">Vào giỏ hàng</a>
+        <a th:href="@{/trang-phuc}" class="btn">Xem trang phục</a>
     </div>
 </div>
 </body>

@@ -4,10 +4,11 @@
 <body>
 <nav th:replace="~{layout :: nav}"></nav>
 <div class="container">
-    <h1>Giỏ hàng của tôi</h1>
+    <h1>Giỏ hàng</h1>
+    <p>Khách hàng: <strong th:text="${kh.hoTen}"></strong></p>
     <div class="msg-ok"  th:if="${success}" th:text="${success}"></div>
     <div class="msg-err" th:if="${error}"   th:text="${error}"></div>
-    
+
     <table th:if="${!#maps.isEmpty(items)}">
         <thead>
             <tr>
@@ -19,7 +20,7 @@
                 <th>Màu sắc</th>
                 <th>Số lượng</th>
                 <th>Giá thuê</th>
-                <th>Thành tiền</th> 
+                <th>Thành tiền</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
@@ -33,15 +34,14 @@
                 <td th:text="${entry.key.mauSac}"></td>
                 <td th:text="${entry.value}"></td>
                 <td th:text="${#numbers.formatDecimal(entry.key.giaThue, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
-                
-                <td style="font-weight: bold;" 
+                <td style="font-weight:bold;"
                     th:text="${#numbers.formatDecimal(entry.key.giaThue * entry.value, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
-                
                 <td>
                     <form class="inline"
                           th:action="@{/gio-hang/xoa/{tpId}(tpId=${entry.key.id})}"
                           method="post"
                           onsubmit="return confirm('Xóa khỏi giỏ hàng?')">
+                        
                         <button type="submit" class="btn btn-danger">Xóa</button>
                     </form>
                 </td>
@@ -50,17 +50,19 @@
         <tfoot>
             <tr th:with="total=${#aggregates.sum(items.![key.giaThue * value])}">
                 <td colspan="8" style="text-align:right; font-weight:bold;">Tổng cộng:</td>
-                <td colspan="2" style="font-weight: bold; color: #d9534f; font-size: 16px;" 
+                <td colspan="2" style="font-weight:bold; color:#d9534f; font-size:16px;"
                     th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
             </tr>
         </tfoot>
     </table>
-    
+
     <p th:if="${#maps.isEmpty(items)}" style="color:#f00909ee; margin-top:10px;">Giỏ hàng trống.</p>
-    
-    <div class="mt" style="display: flex; gap: 10px;">
-        <a href="/trang-phuc" class="btn btn-secondary">Tiếp tục chọn trang phục</a>
-        <a th:if="${!#maps.isEmpty(items)}" href="/phieu-thue/tao" class="btn">Tiến hành đặt cọc</a>
+
+    <div class="mt" style="display:flex; gap:10px;">
+        <a th:href="@{/trang-phuc}" class="btn">Tiếp tục chọn trang phục</a>
+        <a th:if="${!#maps.isEmpty(items)}"
+           th:href="@{/phieu-thue/tao}"
+           class="btn">Tiến hành đặt cọc</a>
     </div>
 </div>
 </body>

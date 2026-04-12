@@ -1,26 +1,29 @@
 package rent.custome.demo.controller;
 
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.annotation.RequireRole;
 import rent.custome.demo.dto.KhachHangDto;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.service.KhachHangService;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin")
-@RequireRole("admin")  // Toàn bộ controller chỉ dành cho admin
 public class KhachHangController {
 
     private final KhachHangService service;
 
     public KhachHangController(KhachHangService service) {
         this.service = service;
+    }
+
+    @ModelAttribute("allKhachHangs")
+    public List<KhachHang> allKhachHangs() {
+        return service.findAll();
     }
 
     @GetMapping
@@ -30,35 +33,35 @@ public class KhachHangController {
     }
 
     @GetMapping("/them")
-    public String showAddForm(Model model) {
-        model.addAttribute("form", new KhachHangDto());
-        model.addAttribute("isEdit", false);
+    public String showCreateForm(Model model) {
+        model.addAttribute("dto", new KhachHangDto());
+        model.addAttribute("editing", false);
         return "admin/form";
     }
 
     @PostMapping("/them")
-    public String create(@Valid @ModelAttribute("form") KhachHangDto form,
+    public String create(@ModelAttribute("dto") KhachHangDto dto,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
-            model.addAttribute("isEdit", false);
+            model.addAttribute("editing", false);
             return "admin/form";
         }
         try {
-            service.create(form);
-            ra.addFlashAttribute("success", "Tạo mới khách hàng thành công");
+            service.create(dto);
+            ra.addFlashAttribute("success", "Đã thêm khách hàng thành công");
+            return "redirect:/admin";
         } catch (Exception e) {
-            model.addAttribute("isEdit", false);
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("editing", false);
             return "admin/form";
         }
-        return "redirect:/admin";
     }
 
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model, RedirectAttributes ra) {
         KhachHang kh = service.findById(id).orElse(null);
         if (kh == null) {
-            ra.addFlashAttribute("error", "Không tìm thấy khách hàng");
+            ra.addFlashAttribute("error", "Không tìm thấy khách hàng id=" + id);
             return "redirect:/admin";
         }
         model.addAttribute("kh", kh);
@@ -72,44 +75,47 @@ public class KhachHangController {
             ra.addFlashAttribute("error", "Không tìm thấy khách hàng");
             return "redirect:/admin";
         }
-        KhachHangDto form = new KhachHangDto();
-        form.setHoTen(kh.getHoTen()); form.setUsername(kh.getUsername());
-        form.setPassword(kh.getPassword()); form.setEmail(kh.getEmail());
-        form.setSoDienThoai(kh.getSoDienThoai()); form.setDiaChi(kh.getDiaChi());
-        form.setDob(kh.getDob()); form.setRole(kh.getRole());
-        form.setIsActive(kh.getIsActive());
-        model.addAttribute("form", form);
-        model.addAttribute("khachHangId", id);
-        model.addAttribute("isEdit", true);
+        KhachHangDto dto = new KhachHangDto();
+        dto.setHoTen(kh.getHoTen());
+        dto.setUsername(kh.getUsername());
+        dto.setEmail(kh.getEmail());
+        dto.setSoDienThoai(kh.getSoDienThoai());
+        dto.setDiaChi(kh.getDiaChi());
+        dto.setDob(kh.getDob());
+        dto.setRole(kh.getRole());
+        dto.setIsActive(kh.getIsActive());
+        model.addAttribute("dto", dto);
+        model.addAttribute("editing", true);
+        model.addAttribute("khId", id);
         return "admin/form";
     }
 
     @PostMapping("/{id}/sua")
-    public String update(@Valid @ModelAttribute("form") KhachHangDto form,
-                         BindingResult br, @PathVariable Long id,
-                         Model model, RedirectAttributes ra) {
+    public String update(@PathVariable Long id,
+                         @ModelAttribute("dto") KhachHangDto dto,
+                         BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
-            model.addAttribute("khachHangId", id);
-            model.addAttribute("isEdit", true);
+            model.addAttribute("editing", true);
+            model.addAttribute("khId", id);
             return "admin/form";
         }
         try {
-            service.update(id, form);
-            ra.addFlashAttribute("success", "Cập nhật khách hàng " + id + " thành công");
+            service.update(id, dto);
+            ra.addFlashAttribute("success", "Đã cập nhật thành công");
+            return "redirect:/admin";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("khachHangId", id);
-            model.addAttribute("isEdit", true);
+            model.addAttribute("editing", true);
+            model.addAttribute("khId", id);
             return "admin/form";
         }
-        return "redirect:/admin";
     }
 
-    @PostMapping("/{id}/doi-trang-thai")
-    public String toggleTrangThai(@PathVariable Long id, RedirectAttributes ra) {
+    @PostMapping("/{id}/toggle")
+    public String toggle(@PathVariable Long id, RedirectAttributes ra) {
         try {
             service.toggleTrangThai(id);
-            ra.addFlashAttribute("success", "Đổi trạng thái tài khoản thành công");
+            ra.addFlashAttribute("success", "Đã thay đổi trạng thái");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
