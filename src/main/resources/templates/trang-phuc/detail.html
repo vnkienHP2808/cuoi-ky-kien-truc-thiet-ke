@@ -31,7 +31,7 @@
             <form class="inline"
                   th:action="@{/gio-hang/them/{id}(id=${tp.id})}"
                   method="post">
-                <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                <button type="submit" class="btn">Thêm vào giỏ hàng</button>
             </form>
         </th:block>
         <th:block th:if="${tp.trangThai.name() == 'SAN_HANG' and selectedKhachHangId == null}">

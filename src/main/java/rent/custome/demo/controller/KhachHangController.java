@@ -34,8 +34,8 @@ public class KhachHangController {
 
     @GetMapping("/them")
     public String showCreateForm(Model model) {
-        model.addAttribute("dto", new KhachHangDto());
-        model.addAttribute("editing", false);
+        model.addAttribute("form", new KhachHangDto());
+        model.addAttribute("isEdit", false);
         return "admin/form";
     }
 
@@ -43,7 +43,7 @@ public class KhachHangController {
     public String create(@ModelAttribute("dto") KhachHangDto dto,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
-            model.addAttribute("editing", false);
+            model.addAttribute("isEdit", false);
             return "admin/form";
         }
         try {
@@ -52,7 +52,7 @@ public class KhachHangController {
             return "redirect:/admin";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("editing", false);
+            model.addAttribute("isEdit", false);
             return "admin/form";
         }
     }
@@ -79,14 +79,16 @@ public class KhachHangController {
         dto.setHoTen(kh.getHoTen());
         dto.setUsername(kh.getUsername());
         dto.setEmail(kh.getEmail());
+        dto.setPassword(kh.getPassword());
         dto.setSoDienThoai(kh.getSoDienThoai());
         dto.setDiaChi(kh.getDiaChi());
         dto.setDob(kh.getDob());
         dto.setRole(kh.getRole());
         dto.setIsActive(kh.getIsActive());
-        model.addAttribute("dto", dto);
-        model.addAttribute("editing", true);
-        model.addAttribute("khId", id);
+
+        model.addAttribute("form", dto);
+        model.addAttribute("isEdit", true);
+        model.addAttribute("khachHangId", id);
         return "admin/form";
     }
 
@@ -95,8 +97,8 @@ public class KhachHangController {
                          @ModelAttribute("dto") KhachHangDto dto,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
-            model.addAttribute("editing", true);
-            model.addAttribute("khId", id);
+            model.addAttribute("isEdit", true);
+            model.addAttribute("khachHangId", id);
             return "admin/form";
         }
         try {
@@ -105,20 +107,9 @@ public class KhachHangController {
             return "redirect:/admin";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("editing", true);
-            model.addAttribute("khId", id);
+            model.addAttribute("isEdit", true);
+            model.addAttribute("khachHangId", id);
             return "admin/form";
         }
-    }
-
-    @PostMapping("/{id}/toggle")
-    public String toggle(@PathVariable Long id, RedirectAttributes ra) {
-        try {
-            service.toggleTrangThai(id);
-            ra.addFlashAttribute("success", "Đã thay đổi trạng thái");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", e.getMessage());
-        }
-        return "redirect:/admin";
     }
 }

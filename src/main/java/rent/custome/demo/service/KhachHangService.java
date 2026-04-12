@@ -71,25 +71,4 @@ public class KhachHangService {
 
         return repo.save(kh);
     }
-
-    public void toggleTrangThai(Long id){
-        log.info("Doi trang thai khach hang id={}", id);
-        KhachHang kh = repo.findById(id).orElseThrow(
-            () -> new RuntimeException("Khong tim thay khach hang co id=" + id));
-        kh.setIsActive(!Boolean.TRUE.equals(kh.getIsActive()));
-        repo.save(kh);
-    }
-
-    public KhachHang login(String username, String password){
-        log.info("Nguoi dung username={} muon dang nhap vao he thong", username);
-        KhachHang kh = repo.findByUsername(username)
-                            .orElseThrow(() -> new RuntimeException("Username không đúng"));
-        
-        if(!kh.getPassword().equals(password)){
-            throw new RuntimeException("Mật khẩu không đúng");
-        }
-
-        log.info("Dang nhap thanh cong: username={}", username);
-        return kh;
-    }
 }
