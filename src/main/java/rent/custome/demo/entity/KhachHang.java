@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "khach_hang")
@@ -14,9 +17,11 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Họ tên không được để trống")
     @Column(name = "ho_ten")
     private String hoTen;
 
+    @NotBlank(message = "Username không được để trống")
     @Column(name = "username", unique = true)
     private String username;
 
@@ -36,12 +41,16 @@ public class KhachHang {
         this.dob = dob;
     }
 
+    @NotBlank(message = "Password không được để trống")
     @Column(name = "password")
     private String password;
 
+    @Email(message = "Email không hợp lệ")
     @Column(name = "email")
     private String email;
 
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^\\d{10}$", message = "Số điện thoại phải gồm 10 chữ số")
     @Column(name = "so_dien_thoai")
     private String soDienThoai;
 

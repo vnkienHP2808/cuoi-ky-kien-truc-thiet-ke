@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.dto.KhachHangDto;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.service.KhachHangService;
 
@@ -34,13 +33,13 @@ public class KhachHangController {
 
     @GetMapping("/them")
     public String showCreateForm(Model model) {
-        model.addAttribute("form", new KhachHangDto());
+        model.addAttribute("form", new KhachHang());
         model.addAttribute("isEdit", false);
         return "admin/form";
     }
 
     @PostMapping("/them")
-    public String create(@ModelAttribute("dto") KhachHangDto dto,
+    public String create(@ModelAttribute("form") KhachHang dto,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", false);
@@ -75,18 +74,7 @@ public class KhachHangController {
             ra.addFlashAttribute("error", "Không tìm thấy khách hàng");
             return "redirect:/admin";
         }
-        KhachHangDto dto = new KhachHangDto();
-        dto.setHoTen(kh.getHoTen());
-        dto.setUsername(kh.getUsername());
-        dto.setEmail(kh.getEmail());
-        dto.setPassword(kh.getPassword());
-        dto.setSoDienThoai(kh.getSoDienThoai());
-        dto.setDiaChi(kh.getDiaChi());
-        dto.setDob(kh.getDob());
-        dto.setRole(kh.getRole());
-        dto.setIsActive(kh.getIsActive());
-
-        model.addAttribute("form", dto);
+        model.addAttribute("form", kh);
         model.addAttribute("isEdit", true);
         model.addAttribute("khachHangId", id);
         return "admin/form";
@@ -94,7 +82,7 @@ public class KhachHangController {
 
     @PostMapping("/{id}/sua")
     public String update(@PathVariable Long id,
-                         @ModelAttribute("dto") KhachHangDto dto,
+                         @ModelAttribute("form") KhachHang dto,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", true);

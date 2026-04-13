@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import rent.custome.demo.dto.KhachHangDto;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.repository.KhachHangRepository;
 
@@ -30,7 +29,7 @@ public class KhachHangService {
         return repo.findById(id);
     }
 
-    public KhachHang create(KhachHangDto dto){
+    public KhachHang create(KhachHang dto){
         log.info("Tao khach hang username={}", dto.getUsername());
         if(repo.findByUsername(dto.getUsername()).isPresent()){
             throw new RuntimeException("Username '" + dto.getUsername() + "' da ton tai");
@@ -50,7 +49,7 @@ public class KhachHangService {
         return repo.save(kh);
     }
 
-    public KhachHang update(Long id, KhachHangDto dto){
+    public KhachHang update(Long id, KhachHang dto){
         log.info("Cap nhat khach hang hoTen={}", dto.getHoTen());
 
         KhachHang kh = repo.findById(id).orElseThrow(

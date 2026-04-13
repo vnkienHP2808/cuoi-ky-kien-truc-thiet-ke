@@ -7,7 +7,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rent.custome.demo.config.AppConfig;
-import rent.custome.demo.dto.CreateOrderRequest;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.entity.PhieuThue;
 import rent.custome.demo.repository.KhachHangRepository;
@@ -40,13 +39,13 @@ public class PhieuThueController {
         Long khachHangId = appConfig.getKhachHangId();
         KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
-        model.addAttribute("req", new CreateOrderRequest());
+        model.addAttribute("pt", new PhieuThue());
         model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/tao";
     }
 
     @PostMapping("/tao")
-    public String create(@Valid @ModelAttribute("req") CreateOrderRequest req,
+    public String create(@Valid @ModelAttribute("pt") PhieuThue pt,
                          BindingResult br, Model model, RedirectAttributes ra) {
         Long khachHangId = appConfig.getKhachHangId();
         KhachHang kh = findKhOrThrow(khachHangId);
@@ -56,9 +55,9 @@ public class PhieuThueController {
             return "phieu-thue/tao";
         }
         try {
-            PhieuThue pt = service.createFromCart(khachHangId, req);
-            ra.addFlashAttribute("success", "Đã tạo phiếu thuê #" + pt.getId());
-            return "redirect:/phieu-thue/" + pt.getId();
+            PhieuThue saved = service.createFromCart(khachHangId, pt);
+            ra.addFlashAttribute("success", "Đã tạo phiếu thuê #" + saved.getId());
+            return "redirect:/phieu-thue/" + saved.getId();
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("kh", kh);

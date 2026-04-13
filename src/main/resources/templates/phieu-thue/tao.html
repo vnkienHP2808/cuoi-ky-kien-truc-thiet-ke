@@ -9,7 +9,7 @@
     <div class="msg-err" th:if="${error}" th:text="${error}"></div>
     <div class="form-wrap">
         <form th:action="@{/phieu-thue/tao}"
-              th:object="${req}" method="post">
+              th:object="${pt}" method="post">
             <div class="form-group">
                 <label>Ngày hẹn lấy *</label>
                 <input type="date" th:field="*{ngayHenLay}"/>

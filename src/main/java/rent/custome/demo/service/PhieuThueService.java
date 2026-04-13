@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import rent.custome.demo.dto.CreateOrderRequest;
 import rent.custome.demo.entity.*;
 import rent.custome.demo.enums.HinhThucThue;
 import rent.custome.demo.enums.PhieuThueStatus;
@@ -47,7 +46,7 @@ public class PhieuThueService {
     }
 
     @Transactional
-    public PhieuThue createFromCart(Long khachHangId, CreateOrderRequest req) {
+    public PhieuThue createFromCart(Long khachHangId, PhieuThue req) {
         log.info("Tao phieu thue cho khachHangId={}", khachHangId);
 
         if (!req.getNgayHenTra().isAfter(req.getNgayHenLay())) {
