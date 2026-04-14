@@ -29,45 +29,55 @@ public class KhachHangService {
         return repo.findById(id);
     }
 
-    public KhachHang create(KhachHang dto){
-        log.info("Tao khach hang username={}", dto.getUsername());
-        if(repo.findByUsername(dto.getUsername()).isPresent()){
-            throw new RuntimeException("Username '" + dto.getUsername() + "' da ton tai");
+    public KhachHang create(KhachHang khachHang){
+        log.info("Tao khach hang username={}", khachHang.getUsername());
+        if(repo.findByUsername(khachHang.getUsername()).isPresent()){
+            throw new RuntimeException("Username '" + khachHang.getUsername() + "' da ton tai");
         }
 
         KhachHang kh = new KhachHang();
-        kh.setHoTen(dto.getHoTen());
-        kh.setUsername(dto.getUsername());
-        kh.setPassword(dto.getPassword());
-        kh.setEmail(dto.getEmail());
-        kh.setSoDienThoai(dto.getSoDienThoai());
-        kh.setDiaChi(dto.getDiaChi());
-        kh.setDob(dto.getDob());
-        kh.setRole(dto.getRole() != null && !dto.getRole().isBlank() ? dto.getRole() : "customer");
-        kh.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
+        kh.setHoTen(khachHang.getHoTen());
+        kh.setUsername(khachHang.getUsername());
+        kh.setPassword(khachHang.getPassword());
+        kh.setEmail(khachHang.getEmail());
+        kh.setSoDienThoai(khachHang.getSoDienThoai());
+        kh.setDiaChi(khachHang.getDiaChi());
+        kh.setDob(khachHang.getDob());
+        kh.setRole(khachHang.getRole() != null && !khachHang.getRole().isBlank() ? khachHang.getRole() : "customer");
+        kh.setIsActive(khachHang.getIsActive() != null ? khachHang.getIsActive() : true);
 
         return repo.save(kh);
     }
 
-    public KhachHang update(Long id, KhachHang dto){
-        log.info("Cap nhat khach hang hoTen={}", dto.getHoTen());
+    public KhachHang update(Long id, KhachHang khachHang){
+        log.info("Cap nhat khach hang hoTen={}", khachHang.getHoTen());
 
         KhachHang kh = repo.findById(id).orElseThrow(
             () -> new RuntimeException("Khong tim thay khach hang co id=" + id));
 
-        kh.setHoTen(dto.getHoTen());
-        kh.setPassword(dto.getPassword());
-        kh.setEmail(dto.getEmail());
-        kh.setSoDienThoai(dto.getSoDienThoai());
-        kh.setDiaChi(dto.getDiaChi());
-        kh.setDob(dto.getDob());
-        if (dto.getRole() != null && !dto.getRole().isBlank()) {
-            kh.setRole(dto.getRole());
+        kh.setHoTen(khachHang.getHoTen());
+        kh.setPassword(khachHang.getPassword());
+        kh.setEmail(khachHang.getEmail());
+        kh.setSoDienThoai(khachHang.getSoDienThoai());
+        kh.setDiaChi(khachHang.getDiaChi());
+        kh.setDob(khachHang.getDob());
+        if (khachHang.getRole() != null && !khachHang.getRole().isBlank()) {
+            kh.setRole(khachHang.getRole());
         }
-        if (dto.getIsActive() != null) {
-            kh.setIsActive(dto.getIsActive());
+        if (khachHang.getIsActive() != null) {
+            kh.setIsActive(khachHang.getIsActive());
         }
 
         return repo.save(kh);
+    }
+
+    public void doiTrangThai(Long khachHangId){
+        log.info("Cap nhat trang thai tai khoan khach hang id = " + khachHangId);
+
+        KhachHang kh = repo.findById(khachHangId).orElseThrow(
+            () -> new RuntimeException("Khong tim thay khach hang co id=" + khachHangId));
+
+            kh.setIsActive(!Boolean.TRUE.equals(kh.getIsActive()));
+            repo.save(kh);
     }
 }

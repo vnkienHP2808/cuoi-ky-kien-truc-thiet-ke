@@ -8,7 +8,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.service.KhachHangService;
 
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -20,13 +19,13 @@ public class KhachHangController {
         this.service = service;
     }
 
-    @ModelAttribute("allKhachHangs")
-    public List<KhachHang> allKhachHangs() {
-        return service.findAll();
-    }
+    // @ModelAttribute("allKhachHangs")
+    // public List<KhachHang> allKhachHangs() {
+    //     return service.findAll();
+    // }
 
     @GetMapping
-    public String list(Model model) {
+    public String showListKhachHang(Model model) {
         model.addAttribute("khachHangs", service.findAll());
         return "admin/list";
     }
@@ -39,14 +38,14 @@ public class KhachHangController {
     }
 
     @PostMapping("/them")
-    public String create(@ModelAttribute("form") KhachHang dto,
+    public String create(@ModelAttribute("form") KhachHang khachHang,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", false);
             return "admin/form";
         }
         try {
-            service.create(dto);
+            service.create(khachHang);
             ra.addFlashAttribute("success", "Đã thêm khách hàng thành công");
             return "redirect:/admin";
         } catch (Exception e) {
@@ -57,7 +56,7 @@ public class KhachHangController {
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model, RedirectAttributes ra) {
+    public String showDetail(@PathVariable Long id, Model model, RedirectAttributes ra) {
         KhachHang kh = service.findById(id).orElse(null);
         if (kh == null) {
             ra.addFlashAttribute("error", "Không tìm thấy khách hàng id=" + id);
@@ -82,7 +81,7 @@ public class KhachHangController {
 
     @PostMapping("/{id}/sua")
     public String update(@PathVariable Long id,
-                         @ModelAttribute("form") KhachHang dto,
+                         @ModelAttribute("form") KhachHang khachHang,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", true);
@@ -90,7 +89,7 @@ public class KhachHangController {
             return "admin/form";
         }
         try {
-            service.update(id, dto);
+            service.update(id, khachHang);
             ra.addFlashAttribute("success", "Đã cập nhật thành công");
             return "redirect:/admin";
         } catch (Exception e) {
@@ -99,5 +98,16 @@ public class KhachHangController {
             model.addAttribute("khachHangId", id);
             return "admin/form";
         }
+    }
+
+    @PostMapping("/{id}/doi-trang-thai")
+    public String doiTrangThai(@PathVariable Long id, RedirectAttributes ra){
+        try {
+            service.doiTrangThai(id);
+            ra.addFlashAttribute("success", "Đã đổi trạng thái tài khoản thành công");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin";
     }
 }

@@ -34,12 +34,12 @@
                 <td th:text="${kh.email}"></td>
                 <td th:text="${kh.soDienThoai}"></td>
                 <td>
-                    <span th:if="${kh.role == 'admin'}" style="color:#c0392b;font-weight:bold;">Admin</span>
-                    <span th:if="${kh.role != 'admin'}" style="color:#2980b9;">Khách hàng</span>
+                    <span th:if="${kh.role == 'admin'}" style="font-weight:bold;">Admin</span>
+                    <span th:if="${kh.role != 'admin'}" >Khách hàng</span>
                 </td>
                 <td>
-                    <span th:if="${kh.isActive}" style="color:#27ae60;font-weight:bold;">Hoạt động</span>
-                    <span th:if="${!kh.isActive}" style="color:#c0392b;">Bị khóa</span>
+                    <span th:if="${kh.isActive}" style="font-weight:bold;">Hoạt động</span>
+                    <span th:if="${!kh.isActive}">Bị khóa</span>
                 </td>
                 <td>
                     <a th:href="@{/admin/{id}(id=${kh.id})}" class="btn">Chi tiết</a>
