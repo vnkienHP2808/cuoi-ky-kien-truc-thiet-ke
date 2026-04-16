@@ -87,7 +87,7 @@ public class PhieuThueService {
             }
         }
 
-        if (cnt == 0) throw new RuntimeException("Tất cả trang phục trong giỏ đã hết hàng");
+        if (cnt == 0) throw new RuntimeException("Tất cả trang phục trong giỏ đã hết hàng hoặc không còn");
 
         double tienCoc = phieuThue.getChiTiet().stream()
                 .mapToDouble(ct -> ct.getDonGia() != null ? ct.getDonGia() : 0).sum() * 0.3;
@@ -102,25 +102,37 @@ public class PhieuThueService {
         return saved;
     }
 
-    /**
-     * STATE PATTERN: Service chỉ gọi phieuThue.datCoc() —
-     * logic chuyển trạng thái nằm trong ChoXuLyState.
-     */
     @Transactional
     public void datCoc(Long phieuThueId) {
         PhieuThue phieuThue = findOrThrow(phieuThueId);
-        phieuThue.datCoc(); // ủy quyền cho State
+
+        if (phieuThue.getTrangThai() == PhieuThueStatus.DA_HUY) {
+            throw new IllegalStateException("Phiếu đã bị hủy, không thể đặt cọc");
+        }
+        if (phieuThue.getTrangThai() == PhieuThueStatus.CHO_XAC_NHAN) {
+            throw new IllegalStateException("Phiếu đã được đặt cọc trước đó");
+        }
+
+        phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.DA_THANH_TOAN);
+        phieuThue.setTrangThai(PhieuThueStatus.CHO_XAC_NHAN);
+
         repository.save(phieuThue);
         log.info("Dat coc phieu {} thanh cong", phieuThueId);
     }
 
-    /**
-     * STATE PATTERN: Hủy phiếu — State tự quyết định có hoàn cọc không.
-     */
     @Transactional
     public void huyPhieu(Long phieuThueId) {
         PhieuThue phieuThue = findOrThrow(phieuThueId);
-        phieuThue.huy(); // ủy quyền cho State
+       
+        if (phieuThue.getTrangThai() == PhieuThueStatus.DA_HUY) {
+            throw new IllegalStateException("Phiếu đã bị hủy trước đó");
+        }
+
+        if (phieuThue.getTrangThai() == PhieuThueStatus.CHO_XAC_NHAN) {
+            phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.DA_HOAN_TRA);
+        }
+
+        phieuThue.setTrangThai(PhieuThueStatus.DA_HUY);
 
         // Hoàn tồn kho khi hủy
         for (ChiTietPhieuThue ct : phieuThue.getChiTiet()) {

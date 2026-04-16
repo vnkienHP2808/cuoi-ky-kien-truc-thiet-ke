@@ -10,6 +10,7 @@
     <div class="form-wrap">
         <form th:action="@{/phieu-thue/tao}"
               th:object="${pt}" method="post">
+            <input type="hidden" name="khachHangId" th:value="${kh.id}"/>
             <div class="form-group">
                 <label>Ngày hẹn lấy *</label>
                 <input type="date" th:field="*{ngayHenLay}"/>
@@ -20,13 +21,16 @@
                 <input type="date" th:field="*{ngayHenTra}"/>
                 <span class="field-err" th:if="${#fields.hasErrors('ngayHenTra')}" th:errors="*{ngayHenTra}"></span>
             </div>
-            <a th:href="@{/gio-hang}" class="btn">Quay lại giỏ hàng</a>
+            <a id="btn-back-gio-hang" href="#" class="btn">Quay lại giỏ hàng</a>
             <button type="submit" class="btn">Xác nhận đặt thuê</button>
         </form>
     </div>
     <p style="margin-top:14px; color:#666; font-size:13px;">
         Tiền đặt cọc = 30% tổng giá thuê. Vui lòng xác nhận sau khi đặt.
     </p>
+    <script>
+        document.getElementById('btn-back-gio-hang').href = '/gio-hang?khachHangId=' + KHACH_HANG_ID;
+    </script>
 </div>
 </body>
 </html>

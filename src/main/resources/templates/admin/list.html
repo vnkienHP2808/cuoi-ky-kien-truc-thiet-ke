@@ -42,7 +42,6 @@
                     <span th:if="${!kh.isActive}">Bị khóa</span>
                 </td>
                 <td>
-                    <a th:href="@{/admin/{id}(id=${kh.id})}" class="btn">Chi tiết</a>
                     <a th:href="@{/admin/{id}/sua(id=${kh.id})}" class="btn">Sửa</a>
                     <form class="inline" th:action="@{/admin/{id}/doi-trang-thai(id=${kh.id})}" method="post"
                                 th:onsubmit="${kh.isActive} ? 'return confirm(\'Khóa tài khoản này?\')' : 'return confirm(\'Mở khóa tài khoản này?\')'">

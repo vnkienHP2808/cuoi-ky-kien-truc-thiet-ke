@@ -38,7 +38,7 @@
                 </td>
                 <td th:text="${#numbers.formatDecimal(pt.tienDatCoc, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
                 <td>
-                    <a th:href="@{/phieu-thue/{id}(id=${pt.id})}"
+                    <a th:href="@{/phieu-thue/{id}(id=${pt.id})} + '?khachHangId=' + ${kh.id}"
                        class="btn">Chi tiết</a>
                 </td>
             </tr>
@@ -48,9 +48,12 @@
         </tbody>
     </table>
     <div class="mt">
-        <a th:href="@{/gio-hang}" class="btn">Vào giỏ hàng</a>
-        <a th:href="@{/trang-phuc}" class="btn">Xem trang phục</a>
+        <a id="btn-gio-hang" href="#" class="btn">Vào giỏ hàng</a>
+        <a href="/trang-phuc" class="btn">Xem trang phục</a>
     </div>
+    <script>
+        document.getElementById('btn-gio-hang').href = '/gio-hang?khachHangId=' + KHACH_HANG_ID;
+    </script>
 </div>
 </body>
 </html>

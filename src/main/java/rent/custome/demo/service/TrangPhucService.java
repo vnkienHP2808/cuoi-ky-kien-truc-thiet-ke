@@ -21,10 +21,6 @@ public class TrangPhucService {
         return repository.findAll();
     }
 
-    public List<TrangPhuc> findAllLoai(){
-        return repository.findAll();
-    }
-
     public Optional<TrangPhuc> findById(Long id){
         return repository.findById(id);
     }

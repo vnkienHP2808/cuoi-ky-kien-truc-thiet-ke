@@ -26,24 +26,24 @@
         </tr>
     </table>
     <div class="mt">
-        <!-- Chỉ hiện nút thêm giỏ hàng khi đã chọn khách hàng và còn hàng -->
-        <th:block th:if="${tp.trangThai.name() == 'SAN_HANG' and selectedKhachHangId != null}">
+        <th:block th:if="${tp.trangThai.name() == 'SAN_HANG'}">
             <form class="inline"
                   th:action="@{/gio-hang/them/{id}(id=${tp.id})}"
-                  method="post">
+                  method="post"
+                  id="form-them-gio-hang">
+                <input type="hidden" name="khachHangId" id="input-khach-hang-id"/>
                 <button type="submit" class="btn">Thêm vào giỏ hàng</button>
             </form>
-        </th:block>
-        <th:block th:if="${tp.trangThai.name() == 'SAN_HANG' and selectedKhachHangId == null}">
-            <span style="color:#a00; font-size:13px;">
-                Vui lòng chọn khách hàng ở góc phải để thêm vào giỏ hàng
-            </span>
         </th:block>
         <th:block th:if="${tp.trangThai.name() != 'SAN_HANG'}">
             <span style="color:#a00; font-size:13px;">Trang phục hiện không khả dụng</span>
         </th:block>
-        <a th:href="@{/trang-phuc}" class="btn" style="margin-left:6px;">Quay lại</a>
+        <a href="/trang-phuc" class="btn" style="margin-left:6px;">Quay lại</a>
     </div>
+    <script>
+        var inp = document.getElementById('input-khach-hang-id');
+        if (inp) inp.value = KHACH_HANG_ID;
+    </script>
 </div>
 </body>
 </html>

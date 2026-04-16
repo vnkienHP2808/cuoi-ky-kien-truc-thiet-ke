@@ -25,22 +25,6 @@ public class KhachHang {
     @Column(name = "username", unique = true)
     private String username;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getDob() {
-        return dob;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
     @NotBlank(message = "Password không được để trống")
     @Column(name = "password")
     private String password;
@@ -95,6 +79,22 @@ public class KhachHang {
         return hoTen;
     }
 
+     public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
     public void setHoTen(String hoTen) {
         this.hoTen = hoTen;
     }
@@ -146,6 +146,5 @@ public class KhachHang {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
-    
     
 }

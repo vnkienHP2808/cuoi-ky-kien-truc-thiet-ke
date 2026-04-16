@@ -63,6 +63,7 @@
               th:action="@{/phieu-thue/{id}/dat-coc(id=${pt.id})}"
               method="post"
               onsubmit="return confirm('Xác nhận đặt cọc?')">
+            <input type="hidden" name="khachHangId" th:value="${kh.id}"/>
             <button type="submit" class="btn">Xác nhận đặt cọc</button>
         </form>
         <form class="inline"
@@ -70,10 +71,14 @@
               th:action="@{/phieu-thue/{id}/huy(id=${pt.id})}"
               method="post"
               onsubmit="return confirm('Hủy phiếu thuê này?')">
+            <input type="hidden" name="khachHangId" th:value="${kh.id}"/>
             <button type="submit" class="btn btn-danger">Hủy phiếu</button>
         </form>
-        <a th:href="@{/phieu-thue/cua-toi}" class="btn">Phiếu thuê của tôi</a>
+        <a id="btn-cua-toi" href="#" class="btn">Phiếu thuê của tôi</a>
     </div>
+    <script>
+        document.getElementById('btn-cua-toi').href = '/phieu-thue/cua-toi?khachHangId=' + KHACH_HANG_ID;
+    </script>
 </div>
 </body>
 </html>

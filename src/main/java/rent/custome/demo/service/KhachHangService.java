@@ -29,7 +29,7 @@ public class KhachHangService {
         return repo.findById(id);
     }
 
-    public KhachHang create(KhachHang khachHang){
+    public void create(KhachHang khachHang){
         log.info("Tao khach hang username={}", khachHang.getUsername());
         if(repo.findByUsername(khachHang.getUsername()).isPresent()){
             throw new RuntimeException("Username '" + khachHang.getUsername() + "' da ton tai");
@@ -46,10 +46,10 @@ public class KhachHangService {
         kh.setRole(khachHang.getRole() != null && !khachHang.getRole().isBlank() ? khachHang.getRole() : "customer");
         kh.setIsActive(khachHang.getIsActive() != null ? khachHang.getIsActive() : true);
 
-        return repo.save(kh);
+        repo.save(kh);
     }
 
-    public KhachHang update(Long id, KhachHang khachHang){
+    public void update(Long id, KhachHang khachHang){
         log.info("Cap nhat khach hang hoTen={}", khachHang.getHoTen());
 
         KhachHang kh = repo.findById(id).orElseThrow(
@@ -68,7 +68,7 @@ public class KhachHangService {
             kh.setIsActive(khachHang.getIsActive());
         }
 
-        return repo.save(kh);
+        repo.save(kh);
     }
 
     public void doiTrangThai(Long khachHangId){

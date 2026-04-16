@@ -19,11 +19,6 @@ public class KhachHangController {
         this.service = service;
     }
 
-    // @ModelAttribute("allKhachHangs")
-    // public List<KhachHang> allKhachHangs() {
-    //     return service.findAll();
-    // }
-
     @GetMapping
     public String showListKhachHang(Model model) {
         model.addAttribute("khachHangs", service.findAll());
@@ -53,17 +48,6 @@ public class KhachHangController {
             model.addAttribute("isEdit", false);
             return "admin/form";
         }
-    }
-
-    @GetMapping("/{id}")
-    public String showDetail(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        KhachHang kh = service.findById(id).orElse(null);
-        if (kh == null) {
-            ra.addFlashAttribute("error", "Không tìm thấy khách hàng id=" + id);
-            return "redirect:/admin";
-        }
-        model.addAttribute("kh", kh);
-        return "admin/detail";
     }
 
     @GetMapping("/{id}/sua")

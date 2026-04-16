@@ -41,7 +41,7 @@
                           th:action="@{/gio-hang/xoa/{tpId}(tpId=${entry.key.id})}"
                           method="post"
                           onsubmit="return confirm('Xóa khỏi giỏ hàng?')">
-                        
+                        <input type="hidden" name="khachHangId" th:value="${kh.id}"/>
                         <button type="submit" class="btn btn-danger">Xóa</button>
                     </form>
                 </td>
@@ -59,11 +59,16 @@
     <p th:if="${#maps.isEmpty(items)}" style="color:#f00909ee; margin-top:10px;">Giỏ hàng trống.</p>
 
     <div class="mt" style="display:flex; gap:10px;">
-        <a th:href="@{/trang-phuc}" class="btn">Tiếp tục chọn trang phục</a>
+        <a href="/trang-phuc" class="btn">Tiếp tục chọn trang phục</a>
         <a th:if="${!#maps.isEmpty(items)}"
-           th:href="@{/phieu-thue/tao}"
+           id="btn-thue"
+           href="#"
            class="btn">Tiến hành thuê</a>
     </div>
+    <script>
+        var btn = document.getElementById('btn-thue');
+        if (btn) btn.href = '/phieu-thue/tao?khachHangId=' + KHACH_HANG_ID;
+    </script>
 </div>
 </body>
 </html>

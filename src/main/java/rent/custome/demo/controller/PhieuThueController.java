@@ -6,62 +6,52 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.config.AppConfig;
 import rent.custome.demo.entity.KhachHang;
 import rent.custome.demo.entity.PhieuThue;
 import rent.custome.demo.repository.KhachHangRepository;
-import rent.custome.demo.repository.TrangPhucRepository;
 import rent.custome.demo.service.PhieuThueService;
+import rent.custome.demo.service.TrangPhucService;
 
 @Controller
 @RequestMapping("/phieu-thue")
 public class PhieuThueController {
 
     private final PhieuThueService service;
-    private final TrangPhucRepository trangPhucRepository;
+    private final TrangPhucService trangPhucService;
     private final KhachHangRepository khachHangRepository;
-    private final AppConfig appConfig;
 
-    public PhieuThueController(PhieuThueService service,
-                                TrangPhucRepository trangPhucRepository,
-                                KhachHangRepository khachHangRepository,
-                                AppConfig appConfig) {
+    public PhieuThueController(PhieuThueService service, TrangPhucService trangPhucService,
+            KhachHangRepository khachHangRepository) {
         this.service = service;
-        this.trangPhucRepository = trangPhucRepository;
+        this.trangPhucService = trangPhucService;
         this.khachHangRepository = khachHangRepository;
-        this.appConfig = appConfig;
     }
 
     // ── Tạo phiếu thuê ──────────────────────────────────────────────
-
     @GetMapping("/tao")
-    public String showCreateForm(Model model) {
-        Long khachHangId = appConfig.getKhachHangId();
+    public String showCreateForm(@RequestParam Long khachHangId, Model model) {
         KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
         model.addAttribute("pt", new PhieuThue());
-        model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/tao";
     }
 
     @PostMapping("/tao")
-    public String create(@Valid @ModelAttribute("pt") PhieuThue pt,
+    public String create(@RequestParam Long khachHangId,
+                         @Valid @ModelAttribute("pt") PhieuThue pt,
                          BindingResult br, Model model, RedirectAttributes ra) {
-        Long khachHangId = appConfig.getKhachHangId();
         KhachHang kh = findKhOrThrow(khachHangId);
         if (br.hasErrors()) {
             model.addAttribute("kh", kh);
-            model.addAttribute("selectedKhachHangId", khachHangId);
             return "phieu-thue/tao";
         }
         try {
             PhieuThue saved = service.createFromCart(khachHangId, pt);
             ra.addFlashAttribute("success", "Đã tạo phiếu thuê #" + saved.getId());
-            return "redirect:/phieu-thue/" + saved.getId();
+            return "redirect:/phieu-thue/" + saved.getId() + "?khachHangId=" + khachHangId;
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("kh", kh);
-            model.addAttribute("selectedKhachHangId", khachHangId);
             return "phieu-thue/tao";
         }
     }
@@ -69,51 +59,52 @@ public class PhieuThueController {
     // ── Danh sách phiếu của khách ────────────────────────────────────
 
     @GetMapping("/cua-toi")
-    public String showListPhieuThue(Model model) {
-        Long khachHangId = appConfig.getKhachHangId();
+    public String showListPhieuThue(@RequestParam Long khachHangId, Model model) {
         KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
         model.addAttribute("phieus", service.findByKhachHangId(khachHangId));
-        model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/list-by-kh";
     }
 
     // ── Đặt cọc ──────────────────────────────────────────────────────
 
     @PostMapping("/{id}/dat-coc")
-    public String datCoc(@PathVariable Long id, RedirectAttributes ra) {
-        Long khachHangId = appConfig.getKhachHangId();
+    public String datCoc(@PathVariable Long id,
+                         @RequestParam Long khachHangId,
+                         RedirectAttributes ra) {
         PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu");
-            return "redirect:/phieu-thue/cua-toi";
+            return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
         if (!pt.getKhachHangId().equals(khachHangId)) {
             ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
-            return "redirect:/phieu-thue/cua-toi";
+            return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
+        
         try {
             service.datCoc(id);
             ra.addFlashAttribute("success", "Đặt cọc thành công. Vui lòng đến lấy đúng hẹn");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/phieu-thue/" + id;
+        return "redirect:/phieu-thue/" + id + "?khachHangId=" + khachHangId;
     }
 
     // ── Hủy phiếu ────────────────────────────────────────────────────
 
     @PostMapping("/{id}/huy")
-    public String huyPhieu(@PathVariable Long id, RedirectAttributes ra) {
-        Long khachHangId = appConfig.getKhachHangId();
+    public String huyPhieu(@PathVariable Long id,
+                           @RequestParam Long khachHangId,
+                           RedirectAttributes ra) {
         PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu");
-            return "redirect:/phieu-thue/cua-toi";
+            return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
         if (!pt.getKhachHangId().equals(khachHangId)) {
             ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
-            return "redirect:/phieu-thue/cua-toi";
+            return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
         try {
             service.huyPhieu(id);
@@ -121,30 +112,30 @@ public class PhieuThueController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/phieu-thue/" + id;
+        return "redirect:/phieu-thue/" + id + "?khachHangId=" + khachHangId;
     }
 
     // ── Chi tiết phiếu ───────────────────────────────────────────────
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        Long khachHangId = appConfig.getKhachHangId();
+    public String showDetail(@PathVariable Long id,
+                         @RequestParam Long khachHangId,
+                         Model model, RedirectAttributes ra) {
         PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu thuê");
-            return "redirect:/phieu-thue/cua-toi";
+            return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
         if (!pt.getKhachHangId().equals(khachHangId)) {
             ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
-            return "redirect:/phieu-thue/cua-toi";
+            return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
         KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
         model.addAttribute("pt", pt);
         model.addAttribute("trangPhucs", pt.getChiTiet().stream()
-                .map(ct -> trangPhucRepository.findById(ct.getTrangPhucId()).orElse(null))
+                .map(ct -> trangPhucService.findById(ct.getTrangPhucId()).orElse(null))
                 .toList());
-        model.addAttribute("selectedKhachHangId", khachHangId);
         return "phieu-thue/detail";
     }
 

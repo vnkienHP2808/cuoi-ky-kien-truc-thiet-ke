@@ -10,8 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import rent.custome.demo.enums.HinhThucThue;
 import rent.custome.demo.enums.PhieuThueStatus;
 import rent.custome.demo.enums.TrangThaiDatCoc;
-import rent.custome.demo.state.PhieuThueState;
-import rent.custome.demo.state.PhieuThueStateFactory;
 
 @Entity
 @Table(name = "phieu_thue")
@@ -55,39 +53,6 @@ public class PhieuThue {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "phieu_thue_id")
     private List<ChiTietPhieuThue> chiTiet = new ArrayList<>();
-
-    /**
-     * STATE PATTERN - không persist, khôi phục từ enum trangThai khi cần.
-     */
-    @Transient
-    private PhieuThueState currentState;
-
-    // --- STATE API ---
-
-    public PhieuThueState getState() {
-        if (currentState == null) {
-            currentState = PhieuThueStateFactory.from(this.trangThai);
-        }
-        return currentState;
-    }
-
-    public void applyState(PhieuThueState newState) {
-        this.currentState = newState;
-    }
-
-    public void datCoc() {
-        getState().datCoc(this);
-    }
-
-    public void huy() {
-        getState().huy(this);
-    }
-
-    public String getTenTrangThai() {
-        return getState().getTenTrangThai();
-    }
-
-    // --- Constructors ---
 
     public PhieuThue() {}
 
@@ -182,21 +147,12 @@ public class PhieuThue {
         this.chiTiet = chiTiet;
     }
 
-    public PhieuThueState getCurrentState() {
-        return currentState;
-    }
-
-    public void setCurrentState(PhieuThueState currentState) {
-        this.currentState = currentState;
-    }
-
-    public PhieuThueStatus getTrangThai() { 
-        return trangThai; 
+    public PhieuThueStatus getTrangThai() {
+        return trangThai;
     }
 
     public void setTrangThai(PhieuThueStatus trangThai) {
         this.trangThai = trangThai;
-        this.currentState = null; // reset để lazy-init lại
     }
 
 }
