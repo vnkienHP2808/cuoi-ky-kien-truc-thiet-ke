@@ -13,7 +13,7 @@ import rent.custome.demo.enums.TrangThaiDatCoc;
 
 @Entity
 @Table(name = "phieu_thue")
-public class PhieuThue {
+public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,15 +52,15 @@ public class PhieuThue {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "phieu_thue_id")
-    private List<ChiTietPhieuThue> chiTiet = new ArrayList<>();
+    private List<RentalItem> chiTiet = new ArrayList<>();
 
-    public PhieuThue() {}
+    public Rental() {}
 
-    public PhieuThue(Long id, Long khachHangId, LocalDate ngayTao,
+    public Rental(Long id, Long khachHangId, LocalDate ngayTao,
                      LocalDate ngayHenLay, LocalDate ngayHenTra,
                      HinhThucThue hinhThuc, PhieuThueStatus trangThai,
                      Double tienDatCoc, TrangThaiDatCoc trangThaiDatCoc,
-                     List<ChiTietPhieuThue> chiTiet) {
+                     List<RentalItem> chiTiet) {
         this.id = id; 
         this.khachHangId = khachHangId; 
         this.ngayTao = ngayTao;
@@ -139,11 +139,11 @@ public class PhieuThue {
         this.trangThaiDatCoc = trangThaiDatCoc;
     }
 
-    public List<ChiTietPhieuThue> getChiTiet() {
+    public List<RentalItem> getChiTiet() {
         return chiTiet;
     }
 
-    public void setChiTiet(List<ChiTietPhieuThue> chiTiet) {
+    public void setChiTiet(List<RentalItem> chiTiet) {
         this.chiTiet = chiTiet;
     }
 

@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import rent.custome.demo.entity.ChiTietGioHang;
+import rent.custome.demo.entity.CartItem;
 
 @Repository
-public interface ChiTietGioHangRepository extends JpaRepository<ChiTietGioHang, Long>{
-    List<ChiTietGioHang> findByGioHangId(Long gioHangId);
-    Optional<ChiTietGioHang> findByGioHangIdAndTrangPhucId(Long gioHangId, Long trangPhucId);
+public interface CartItemRepository extends JpaRepository<CartItem, Long>{
+    List<CartItem> findByGioHangId(Long gioHangId);
+    Optional<CartItem> findByGioHangIdAndTrangPhucId(Long gioHangId, Long trangPhucId);
     void deleteByGioHangIdAndTrangPhucId(Long gioHangId, Long trangPhucId);
 }

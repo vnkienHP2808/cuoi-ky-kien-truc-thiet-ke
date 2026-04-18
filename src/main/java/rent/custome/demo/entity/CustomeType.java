@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "loai_trang_phuc")
-public class LoaiTrangPhuc {
+public class CustomeType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +21,10 @@ public class LoaiTrangPhuc {
     @Column(name = "mo_ta")
     private String moTa;
 
-    public LoaiTrangPhuc() {
+    public CustomeType() {
     }
 
-    public LoaiTrangPhuc(Long id, String tenLoaiTrangPhuc, String moTa) {
+    public CustomeType(Long id, String tenLoaiTrangPhuc, String moTa) {
         this.id = id;
         this.tenLoaiTrangPhuc = tenLoaiTrangPhuc;
         this.moTa = moTa;

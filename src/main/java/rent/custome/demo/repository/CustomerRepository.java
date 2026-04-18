@@ -5,10 +5,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import rent.custome.demo.entity.GioHang;
-
+import rent.custome.demo.entity.Customer;
 
 @Repository
-public interface GioHangRepository extends JpaRepository<GioHang, Long>{
-    Optional<GioHang> findByKhachHangId(Long khachHangId);
+public interface CustomerRepository extends JpaRepository<Customer, Long>{
+
+    Optional<Customer> findByUsername(String username);
+
 }

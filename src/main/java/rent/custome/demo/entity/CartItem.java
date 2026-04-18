@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chi_tiet_gio_hang")
-public class ChiTietGioHang {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,10 +56,10 @@ public class ChiTietGioHang {
         this.soLuong = soLuong;
     }
 
-    public ChiTietGioHang() {
+    public CartItem() {
     }
 
-    public ChiTietGioHang(Long id, Long gioHangId, Long trangPhucId, Integer soLuong) {
+    public CartItem(Long id, Long gioHangId, Long trangPhucId, Integer soLuong) {
         this.id = id;
         this.gioHangId = gioHangId;
         this.trangPhucId = trangPhucId;
