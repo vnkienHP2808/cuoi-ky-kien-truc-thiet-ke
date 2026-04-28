@@ -43,6 +43,8 @@ public class CartService {
             repository.save(gioHang);
         }
 
+        log.info("Lay gio hang cho khachHangId={}, gioHangId={}", khachHangId, gioHang.getId());
+
         return gioHang;
     }
 
@@ -56,6 +58,8 @@ public class CartService {
             Custome tp = trangPhucRepository.findById(chiTiet.getTrangPhucId()).orElse(null);
             if(tp != null) items.put(tp, chiTiet.getSoLuong());
         }
+
+        log.info("Lay {} trang phuc trong gio hang khachHangId={}", items.size(), khachHangId);
 
         return items;
     }
@@ -85,6 +89,7 @@ public class CartService {
 
         cart.setNgayCapNhat(LocalDate.now());
         repository.save(cart);
+        
         log.info("Da them trang phuc {} vao gio hang khach {}", trangPhucId, khachHangId);
     }
 

@@ -17,12 +17,14 @@ public class CustomeController {
         this.service = service;
     }
 
+    // xem danh sách trang phục
     @GetMapping
     public String showList(Model model) {
         model.addAttribute("trangPhucs", service.findAll());
         return "trang-phuc/list";
     }
 
+    // xem chi tiết trang phục
     @GetMapping("/{id}")
     public String showDetail(@PathVariable Long id,
                          Model model, RedirectAttributes ra) {

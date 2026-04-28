@@ -21,6 +21,7 @@ public class CartController {
         this.khachHangRepository = khachHangRepository;
     }
 
+    // xem giỏ hàng của khách hàng
     @GetMapping
     public String viewCart(@RequestParam Long khachHangId, Model model) {
         Customer kh = khachHangRepository.findById(khachHangId)
@@ -30,6 +31,7 @@ public class CartController {
         return "gio-hang/view";
     }
 
+    // thêm trang phục vào giỏ hàng
     @PostMapping("/them/{trangPhucId}")
     public String addToCart(@PathVariable Long trangPhucId,
                             @RequestParam Long khachHangId,
@@ -43,6 +45,7 @@ public class CartController {
         return "redirect:/trang-phuc/" + trangPhucId + "?khachHangId=" + khachHangId;
     }
 
+    // xoá trang phục khỏi giỏ hàng
     @PostMapping("/xoa/{trangPhucId}")
     public String removeFromCart(@PathVariable Long trangPhucId,
                                  @RequestParam Long khachHangId,

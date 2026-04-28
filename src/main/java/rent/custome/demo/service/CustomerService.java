@@ -30,7 +30,6 @@ public class CustomerService {
     }
 
     public void create(Customer khachHang){
-        log.info("Tao khach hang username={}", khachHang.getUsername());
         if(repo.findByUsername(khachHang.getUsername()).isPresent()){
             throw new RuntimeException("Username '" + khachHang.getUsername() + "' da ton tai");
         }
@@ -47,11 +46,11 @@ public class CustomerService {
         kh.setIsActive(khachHang.getIsActive() != null ? khachHang.getIsActive() : true);
 
         repo.save(kh);
+
+        log.info("Tao khach hang moi hoTen={}", khachHang.getHoTen());
     }
 
     public void update(Long id, Customer khachHang){
-        log.info("Cap nhat khach hang hoTen={}", khachHang.getHoTen());
-
         Customer kh = repo.findById(id).orElseThrow(
             () -> new RuntimeException("Khong tim thay khach hang co id=" + id));
 
@@ -69,15 +68,18 @@ public class CustomerService {
         }
 
         repo.save(kh);
+
+        log.info("Cap nhat khach hang hoTen={}", khachHang.getHoTen());
     }
 
     public void doiTrangThai(Long khachHangId){
-        log.info("Cap nhat trang thai tai khoan khach hang id = " + khachHangId);
 
         Customer kh = repo.findById(khachHangId).orElseThrow(
             () -> new RuntimeException("Khong tim thay khach hang co id=" + khachHangId));
 
             kh.setIsActive(!Boolean.TRUE.equals(kh.getIsActive()));
             repo.save(kh);
+
+            log.info("Cap nhat trang thai tai khoan khach hang id = " + khachHangId);
     }
 }

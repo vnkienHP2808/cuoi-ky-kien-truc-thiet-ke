@@ -1,7 +1,6 @@
 package rent.custome.demo.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,15 +25,18 @@ public class RentalService {
     private final CartRepository gioHangRepository;
     private final CartItemRepository chiTietGioHangRepository;
     private final CustomeRepository trangPhucRepository;
+    private final RentalItemRepository rentalItemRepository;
 
     public RentalService(RentalRepository repository,
                             CartRepository gioHangRepository,
                             CartItemRepository chiTietGioHangRepository,
-                            CustomeRepository trangPhucRepository) {
+                            CustomeRepository trangPhucRepository,
+                            RentalItemRepository rentalItemRepository) {
         this.repository = repository;
         this.gioHangRepository = gioHangRepository;
         this.chiTietGioHangRepository = chiTietGioHangRepository;
         this.trangPhucRepository = trangPhucRepository;
+        this.rentalItemRepository = rentalItemRepository;
     }
 
     public Optional<Rental> findById(Long id) {
@@ -47,7 +49,6 @@ public class RentalService {
 
     @Transactional
     public Rental createFromCart(Long khachHangId, Rental req) {
-        log.info("Tao phieu thue cho khachHangId={}", khachHangId);
 
         if (!req.getNgayHenTra().isAfter(req.getNgayHenLay())) {
             throw new RuntimeException("Ngày hẹn trả phải sau ngày hẹn lấy");
@@ -70,15 +71,22 @@ public class RentalService {
         phieuThue.setTrangThai(PhieuThueStatus.CHO_DAT_COC);
         phieuThue.setTienDatCoc(0.0);
         phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.CHUA_THANH_TOAN);
-        phieuThue.setChiTiet(new ArrayList<>());
+
+        // lưu trước để lấy id 
+        Rental saved = repository.save(phieuThue);
 
         int cnt = 0;
+        double tienCoc = 0.0;
         for (CartItem item : cartItems) {
             Custome tp = trangPhucRepository.findById(item.getTrangPhucId()).orElse(null);
             if (tp != null && tp.getSoLuong() > 0 && tp.getTrangThai() == TrangPhucStatus.SAN_HANG) {
-                phieuThue.getChiTiet().add(
-                    new RentalItem(phieuThue.getId(), tp.getId(),
-                                        item.getSoLuong(), item.getSoLuong() * tp.getGiaThue()));
+
+                RentalItem rentalItem = new RentalItem(saved.getId(), tp.getId(),
+                        item.getSoLuong(), item.getSoLuong() * tp.getGiaThue());
+                rentalItemRepository.save(rentalItem);
+
+                tienCoc += rentalItem.getDonGia();
+
                 int conLai = tp.getSoLuong() - item.getSoLuong();
                 tp.setSoLuong(conLai);
                 if (conLai == 0) tp.setTrangThai(TrangPhucStatus.KHONG_CON_HANG);
@@ -89,16 +97,14 @@ public class RentalService {
 
         if (cnt == 0) throw new RuntimeException("Tất cả trang phục trong giỏ đã hết hàng hoặc không còn");
 
-        double tienCoc = phieuThue.getChiTiet().stream()
-                .mapToDouble(ct -> ct.getDonGia() != null ? ct.getDonGia() : 0).sum() * 0.3;
-        phieuThue.setTienDatCoc(tienCoc);
+        saved.setTienDatCoc(tienCoc * 0.3);
+        repository.save(saved);
 
-        Rental saved = repository.save(phieuThue);
         chiTietGioHangRepository.deleteAll(cartItems);
         cart.setNgayCapNhat(LocalDate.now());
         gioHangRepository.save(cart);
 
-        log.info("Tao phieu thue thanh cong id={}", saved.getId());
+        log.info("Tao phieu thue thanh cong id={} cho khach hang id={}", saved.getId(), khachHangId);
         return saved;
     }
 
@@ -123,7 +129,7 @@ public class RentalService {
     @Transactional
     public void huyPhieu(Long phieuThueId) {
         Rental phieuThue = findOrThrow(phieuThueId);
-       
+
         if (phieuThue.getTrangThai() == PhieuThueStatus.DA_HUY) {
             throw new IllegalStateException("Phiếu đã bị hủy trước đó");
         }
@@ -134,8 +140,8 @@ public class RentalService {
 
         phieuThue.setTrangThai(PhieuThueStatus.DA_HUY);
 
-        // Hoàn tồn kho khi hủy
-        for (RentalItem ct : phieuThue.getChiTiet()) {
+        List<RentalItem> chiTiets = rentalItemRepository.findByPhieuThueId(phieuThueId);
+        for (RentalItem ct : chiTiets) {
             trangPhucRepository.findById(ct.getTrangPhucId()).ifPresent(tp -> {
                 tp.setSoLuong(tp.getSoLuong() + ct.getSoLuong());
                 if (tp.getTrangThai() == TrangPhucStatus.KHONG_CON_HANG)

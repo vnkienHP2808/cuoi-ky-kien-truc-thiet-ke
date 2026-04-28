@@ -50,7 +50,7 @@ public class Rental {
     @Column(name = "trang_thai_dat_coc")
     private TrangThaiDatCoc trangThaiDatCoc;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
     @JoinColumn(name = "phieu_thue_id")
     private List<RentalItem> chiTiet = new ArrayList<>();
 

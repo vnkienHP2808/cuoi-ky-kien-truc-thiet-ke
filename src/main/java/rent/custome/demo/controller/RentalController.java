@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rent.custome.demo.entity.Customer;
 import rent.custome.demo.entity.Rental;
+import rent.custome.demo.entity.RentalItem;
 import rent.custome.demo.repository.CustomerRepository;
+import rent.custome.demo.repository.RentalItemRepository;
 import rent.custome.demo.service.RentalService;
 import rent.custome.demo.service.CustomeService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/phieu-thue")
@@ -19,15 +23,18 @@ public class RentalController {
     private final RentalService service;
     private final CustomeService trangPhucService;
     private final CustomerRepository khachHangRepository;
+    private final RentalItemRepository rentalItemRepository;
 
     public RentalController(RentalService service, CustomeService trangPhucService,
-            CustomerRepository khachHangRepository) {
+            CustomerRepository khachHangRepository,
+            RentalItemRepository rentalItemRepository) {
         this.service = service;
         this.trangPhucService = trangPhucService;
         this.khachHangRepository = khachHangRepository;
+        this.rentalItemRepository = rentalItemRepository;
     }
 
-    // ── Tạo phiếu thuê ──────────────────────────────────────────────
+    // tạo phiếu thuê mới từ giỏ hàng của khách hàng
     @GetMapping("/tao")
     public String showCreateForm(@RequestParam Long khachHangId, Model model) {
         Customer kh = findKhOrThrow(khachHangId);
@@ -50,14 +57,13 @@ public class RentalController {
             ra.addFlashAttribute("success", "Đã tạo phiếu thuê #" + saved.getId());
             return "redirect:/phieu-thue/" + saved.getId() + "?khachHangId=" + khachHangId;
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Lỗi khi tạo phiếu thuê: " + e.getMessage());
             model.addAttribute("kh", kh);
             return "phieu-thue/tao";
         }
     }
 
-    // ── Danh sách phiếu của khách ────────────────────────────────────
-
+    // danh sách phiếu thuê của khách hàng
     @GetMapping("/cua-toi")
     public String showListPhieuThue(@RequestParam Long khachHangId, Model model) {
         Customer kh = findKhOrThrow(khachHangId);
@@ -66,8 +72,7 @@ public class RentalController {
         return "phieu-thue/list-by-kh";
     }
 
-    // ── Đặt cọc ──────────────────────────────────────────────────────
-
+    // đặt cọc phiếu thuê
     @PostMapping("/{id}/dat-coc")
     public String datCoc(@PathVariable Long id,
                          @RequestParam Long khachHangId,
@@ -86,13 +91,12 @@ public class RentalController {
             service.datCoc(id);
             ra.addFlashAttribute("success", "Đặt cọc thành công. Vui lòng đến lấy đúng hẹn");
         } catch (Exception e) {
-            ra.addFlashAttribute("error", e.getMessage());
+            ra.addFlashAttribute("error", "Lỗi khi đặt cọc: " + e.getMessage());
         }
         return "redirect:/phieu-thue/" + id + "?khachHangId=" + khachHangId;
     }
 
-    // ── Hủy phiếu ────────────────────────────────────────────────────
-
+    // hủy phiếu thuê
     @PostMapping("/{id}/huy")
     public String huyPhieu(@PathVariable Long id,
                            @RequestParam Long khachHangId,
@@ -110,13 +114,12 @@ public class RentalController {
             service.huyPhieu(id);
             ra.addFlashAttribute("success", "Đã hủy phiếu thành công");
         } catch (Exception e) {
-            ra.addFlashAttribute("error", e.getMessage());
+            ra.addFlashAttribute("error", "Lỗi khi hủy phiếu: " + e.getMessage());
         }
         return "redirect:/phieu-thue/" + id + "?khachHangId=" + khachHangId;
     }
 
-    // ── Chi tiết phiếu ───────────────────────────────────────────────
-
+    // xem chi tiết phiếu thuê
     @GetMapping("/{id}")
     public String showDetail(@PathVariable Long id,
                          @RequestParam Long khachHangId,
@@ -131,15 +134,18 @@ public class RentalController {
             return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
         Customer kh = findKhOrThrow(khachHangId);
+
+
+        List<RentalItem> chiTiets = rentalItemRepository.findByPhieuThueId(id);
+
         model.addAttribute("kh", kh);
         model.addAttribute("pt", pt);
-        model.addAttribute("trangPhucs", pt.getChiTiet().stream()
+        model.addAttribute("trangPhucs", chiTiets.stream()
                 .map(ct -> trangPhucService.findById(ct.getTrangPhucId()).orElse(null))
                 .toList());
         return "phieu-thue/detail";
     }
 
-    // ── Helper ───────────────────────────────────────────────────────
 
     private Customer findKhOrThrow(Long id) {
         return khachHangRepository.findById(id)

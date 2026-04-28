@@ -5,6 +5,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.validation.Valid;
 import rent.custome.demo.entity.Customer;
 import rent.custome.demo.service.CustomerService;
 
@@ -25,6 +27,7 @@ public class CustomerController {
         return "admin/list";
     }
 
+    // thêm khách hàng mới
     @GetMapping("/them")
     public String showCreateForm(Model model) {
         model.addAttribute("form", new Customer());
@@ -33,7 +36,7 @@ public class CustomerController {
     }
 
     @PostMapping("/them")
-    public String create(@ModelAttribute("form") Customer khachHang,
+    public String create(@Valid @ModelAttribute("form") Customer khachHang,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", false);
@@ -44,12 +47,13 @@ public class CustomerController {
             ra.addFlashAttribute("success", "Đã thêm khách hàng thành công");
             return "redirect:/admin";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Lỗi khi thêm khách hàng: " + e.getMessage());
             model.addAttribute("isEdit", false);
             return "admin/form";
         }
     }
 
+    // sửa thông tin khách hàng
     @GetMapping("/{id}/sua")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
         Customer kh = service.findById(id).orElse(null);
@@ -65,7 +69,7 @@ public class CustomerController {
 
     @PostMapping("/{id}/sua")
     public String update(@PathVariable Long id,
-                         @ModelAttribute("form") Customer khachHang,
+                         @Valid @ModelAttribute("form") Customer khachHang,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", true);
@@ -77,20 +81,21 @@ public class CustomerController {
             ra.addFlashAttribute("success", "Đã cập nhật thành công");
             return "redirect:/admin";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Lỗi khi cập nhật khách hàng: " + e.getMessage());
             model.addAttribute("isEdit", true);
             model.addAttribute("khachHangId", id);
             return "admin/form";
         }
     }
 
+    // đổi trạng thái tài khoản khách hàng
     @PostMapping("/{id}/doi-trang-thai")
     public String doiTrangThai(@PathVariable Long id, RedirectAttributes ra){
         try {
             service.doiTrangThai(id);
             ra.addFlashAttribute("success", "Đã đổi trạng thái tài khoản thành công");
         } catch (Exception e) {
-            ra.addFlashAttribute("error", e.getMessage());
+            ra.addFlashAttribute("error", "Lỗi khi đổi trạng thái tài khoản: " + e.getMessage());
         }
         return "redirect:/admin";
     }
