@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "khach_hang")
-public class Customer {
+public class KhachHang {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,10 +50,10 @@ public class Customer {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    public Customer() {
+    public KhachHang() {
     }
 
-    public Customer(Long id, String hoTen, String username, String password, String email, String soDienThoai,
+    public KhachHang(Long id, String hoTen, String username, String password, String email, String soDienThoai,
             String diaChi, String dob, String role) {
         this.id = id;
         this.hoTen = hoTen;

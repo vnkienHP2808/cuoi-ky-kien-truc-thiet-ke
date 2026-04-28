@@ -9,33 +9,33 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import rent.custome.demo.entity.CartItem;
-import rent.custome.demo.entity.Cart;
-import rent.custome.demo.entity.Custome;
-import rent.custome.demo.repository.CartItemRepository;
-import rent.custome.demo.repository.CartRepository;
-import rent.custome.demo.repository.CustomeRepository;
+import rent.custome.demo.entity.ChiTietGioHang;
+import rent.custome.demo.entity.GioHang;
+import rent.custome.demo.entity.TrangPhuc;
+import rent.custome.demo.repository.ChiTietGioHangRepository;
+import rent.custome.demo.repository.GioHangRepository;
+import rent.custome.demo.repository.TrangPhucRepository;
 
 @Service
-public class CartService {
-    private static final Logger log = LoggerFactory.getLogger(CartService.class);
+public class GioHangService {
+    private static final Logger log = LoggerFactory.getLogger(GioHangService.class);
 
-    private final CartRepository repository;
-    private final CartItemRepository chiTietGioHangRepository;
-    private final CustomeRepository trangPhucRepository;
+    private final GioHangRepository repository;
+    private final ChiTietGioHangRepository chiTietGioHangRepository;
+    private final TrangPhucRepository trangPhucRepository;
 
-    public CartService(CartRepository repository, CartItemRepository chiTietGioHangRepository,
-            CustomeRepository trangPhucRepository) {
+    public GioHangService(GioHangRepository repository, ChiTietGioHangRepository chiTietGioHangRepository,
+            TrangPhucRepository trangPhucRepository) {
         this.repository = repository;
         this.chiTietGioHangRepository = chiTietGioHangRepository;
         this.trangPhucRepository = trangPhucRepository;
     }
 
-    public Cart getOrCreate(Long khachHangId){
-        Cart gioHang = repository.findByKhachHangId(khachHangId).orElse(null);
+    public GioHang getOrCreate(Long khachHangId){
+        GioHang gioHang = repository.findByKhachHangId(khachHangId).orElse(null);
 
         if(gioHang == null){
-            gioHang = new Cart();
+            gioHang = new GioHang();
             gioHang.setKhachHangId(khachHangId);
             gioHang.setNgayTao(LocalDate.now());
             gioHang.setNgayCapNhat(LocalDate.now());
@@ -48,14 +48,14 @@ public class CartService {
         return gioHang;
     }
 
-    public LinkedHashMap<Custome, Integer> getCartItems(Long khachHangId){
-        Cart gioHang = getOrCreate(khachHangId);
+    public LinkedHashMap<TrangPhuc, Integer> getCartItems(Long khachHangId){
+        GioHang gioHang = getOrCreate(khachHangId);
 
-        List<CartItem> chiTiets = chiTietGioHangRepository.findByGioHangId(gioHang.getId());
-        LinkedHashMap<Custome, Integer> items = new LinkedHashMap<>();
+        List<ChiTietGioHang> chiTiets = chiTietGioHangRepository.findByGioHangId(gioHang.getId());
+        LinkedHashMap<TrangPhuc, Integer> items = new LinkedHashMap<>();
 
-        for(CartItem chiTiet : chiTiets){
-            Custome tp = trangPhucRepository.findById(chiTiet.getTrangPhucId()).orElse(null);
+        for(ChiTietGioHang chiTiet : chiTiets){
+            TrangPhuc tp = trangPhucRepository.findById(chiTiet.getTrangPhucId()).orElse(null);
             if(tp != null) items.put(tp, chiTiet.getSoLuong());
         }
 
@@ -66,15 +66,15 @@ public class CartService {
 
     @Transactional
     public void addToCart(Long khachHangId, Long trangPhucId){
-        Custome tp = trangPhucRepository.findById(trangPhucId)
+        TrangPhuc tp = trangPhucRepository.findById(trangPhucId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy trang phục"));
 
-        Cart cart = getOrCreate(khachHangId);
-        CartItem chiTietGioHang = chiTietGioHangRepository.findByGioHangIdAndTrangPhucId(cart.getId(), trangPhucId)
+        GioHang cart = getOrCreate(khachHangId);
+        ChiTietGioHang chiTietGioHang = chiTietGioHangRepository.findByGioHangIdAndTrangPhucId(cart.getId(), trangPhucId)
                                                                 .orElse(null);
         
         if(chiTietGioHang == null){
-            chiTietGioHang = new CartItem();
+            chiTietGioHang = new ChiTietGioHang();
             chiTietGioHang.setGioHangId(cart.getId());
             chiTietGioHang.setTrangPhucId(trangPhucId);
             chiTietGioHang.setSoLuong(1);
@@ -95,7 +95,7 @@ public class CartService {
 
     @Transactional
     public void removeFromCart(Long khachHangId, Long trangPhucId){
-        Cart cart = getOrCreate(khachHangId);
+        GioHang cart = getOrCreate(khachHangId);
 
         chiTietGioHangRepository.deleteByGioHangIdAndTrangPhucId(cart.getId(), trangPhucId);
         log.info("Da xoa trang phuc {} khoi gio hang khach {}", trangPhucId, khachHangId);

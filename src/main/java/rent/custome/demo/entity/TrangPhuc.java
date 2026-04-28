@@ -14,7 +14,7 @@ import rent.custome.demo.enums.TrangPhucStatus;
 
 @Entity
 @Table(name = "trang_phuc")
-public class Custome {
+public class TrangPhuc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class Custome {
     
     @ManyToOne
     @JoinColumn(name = "loai_trang_phuc_id")
-    private CustomeType loaiTrangPhuc;
+    private LoaiTrangPhuc loaiTrangPhuc;
 
 
     @Column(name = "kich_thuoc")
@@ -46,10 +46,10 @@ public class Custome {
     @Column(name = "trang_thai")
     private TrangPhucStatus trangThai;
 
-    public Custome() {
+    public TrangPhuc() {
     }
     
-    public Custome(Long id, String tenTrangPhuc, CustomeType loaiTrangPhuc, String kichThuoc, String mauSac,
+    public TrangPhuc(Long id, String tenTrangPhuc, LoaiTrangPhuc loaiTrangPhuc, String kichThuoc, String mauSac,
             Double giaThue, Double giaGoc, Integer soLuong, TrangPhucStatus trangThai) {
         this.id = id;
         this.tenTrangPhuc = tenTrangPhuc;
@@ -79,11 +79,11 @@ public class Custome {
         this.tenTrangPhuc = tenTrangPhuc;
     }
 
-    public CustomeType getLoaiTrangPhuc() {
+    public LoaiTrangPhuc getLoaiTrangPhuc() {
         return loaiTrangPhuc;
     }
 
-    public void setLoaiTrangPhuc(CustomeType loaiTrangPhuc) {
+    public void setLoaiTrangPhuc(LoaiTrangPhuc loaiTrangPhuc) {
         this.loaiTrangPhuc = loaiTrangPhuc;
     }
 

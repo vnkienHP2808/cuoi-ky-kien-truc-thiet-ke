@@ -4,16 +4,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.entity.Custome;
-import rent.custome.demo.service.CustomeService;
+import rent.custome.demo.entity.TrangPhuc;
+import rent.custome.demo.service.TrangPhucService;
 
 @Controller
 @RequestMapping("/trang-phuc")
-public class CustomeController {
+public class TrangPhucController {
 
-    private final CustomeService service;
+    private final TrangPhucService service;
 
-    public CustomeController(CustomeService service) {
+    public TrangPhucController(TrangPhucService service) {
         this.service = service;
     }
 
@@ -28,7 +28,7 @@ public class CustomeController {
     @GetMapping("/{id}")
     public String showDetail(@PathVariable Long id,
                          Model model, RedirectAttributes ra) {
-        Custome tp = service.findById(id).orElse(null);
+        TrangPhuc tp = service.findById(id).orElse(null);
         if (tp == null) {
             ra.addFlashAttribute("error", "Không tìm thấy sản phẩm id=" + id);
             return "redirect:/trang-phuc";

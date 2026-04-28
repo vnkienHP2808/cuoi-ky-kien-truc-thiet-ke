@@ -17,21 +17,21 @@ import rent.custome.demo.enums.TrangThaiDatCoc;
 import rent.custome.demo.repository.*;
 
 @Service
-public class RentalService {
+public class PhieuThueService {
 
-    private static final Logger log = LoggerFactory.getLogger(RentalService.class);
+    private static final Logger log = LoggerFactory.getLogger(PhieuThueService.class);
 
-    private final RentalRepository repository;
-    private final CartRepository gioHangRepository;
-    private final CartItemRepository chiTietGioHangRepository;
-    private final CustomeRepository trangPhucRepository;
-    private final RentalItemRepository rentalItemRepository;
+    private final PhieuThueRepository repository;
+    private final GioHangRepository gioHangRepository;
+    private final ChiTietGioHangRepository chiTietGioHangRepository;
+    private final TrangPhucRepository trangPhucRepository;
+    private final ChiTietPhieuThueRepository rentalItemRepository;
 
-    public RentalService(RentalRepository repository,
-                            CartRepository gioHangRepository,
-                            CartItemRepository chiTietGioHangRepository,
-                            CustomeRepository trangPhucRepository,
-                            RentalItemRepository rentalItemRepository) {
+    public PhieuThueService(PhieuThueRepository repository,
+                            GioHangRepository gioHangRepository,
+                            ChiTietGioHangRepository chiTietGioHangRepository,
+                            TrangPhucRepository trangPhucRepository,
+                            ChiTietPhieuThueRepository rentalItemRepository) {
         this.repository = repository;
         this.gioHangRepository = gioHangRepository;
         this.chiTietGioHangRepository = chiTietGioHangRepository;
@@ -39,30 +39,30 @@ public class RentalService {
         this.rentalItemRepository = rentalItemRepository;
     }
 
-    public Optional<Rental> findById(Long id) {
+    public Optional<PhieuThue> findById(Long id) {
         return repository.findById(id);
     }
 
-    public List<Rental> findByKhachHangId(Long khachHangId) {
+    public List<PhieuThue> findByKhachHangId(Long khachHangId) {
         return repository.findByKhachHangId(khachHangId);
     }
 
     @Transactional
-    public Rental createFromCart(Long khachHangId, Rental req) {
+    public PhieuThue createFromCart(Long khachHangId, PhieuThue req) {
 
         if (!req.getNgayHenTra().isAfter(req.getNgayHenLay())) {
             throw new RuntimeException("Ngày hẹn trả phải sau ngày hẹn lấy");
         }
 
-        Cart cart = gioHangRepository.findByKhachHangId(khachHangId)
+        GioHang cart = gioHangRepository.findByKhachHangId(khachHangId)
                 .orElseThrow(() -> new RuntimeException("Giỏ hàng trống, hãy thêm trang phục trước"));
 
-        List<CartItem> cartItems = chiTietGioHangRepository.findByGioHangId(cart.getId());
+        List<ChiTietGioHang> cartItems = chiTietGioHangRepository.findByGioHangId(cart.getId());
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Giỏ hàng trống, hãy thêm trang phục trước");
         }
 
-        Rental phieuThue = new Rental();
+        PhieuThue phieuThue = new PhieuThue();
         phieuThue.setKhachHangId(khachHangId);
         phieuThue.setNgayTao(LocalDate.now());
         phieuThue.setNgayHenLay(req.getNgayHenLay());
@@ -73,15 +73,15 @@ public class RentalService {
         phieuThue.setTrangThaiDatCoc(TrangThaiDatCoc.CHUA_THANH_TOAN);
 
         // lưu trước để lấy id 
-        Rental saved = repository.save(phieuThue);
+        PhieuThue saved = repository.save(phieuThue);
 
         int cnt = 0;
         double tienCoc = 0.0;
-        for (CartItem item : cartItems) {
-            Custome tp = trangPhucRepository.findById(item.getTrangPhucId()).orElse(null);
+        for (ChiTietGioHang item : cartItems) {
+            TrangPhuc tp = trangPhucRepository.findById(item.getTrangPhucId()).orElse(null);
             if (tp != null && tp.getSoLuong() > 0 && tp.getTrangThai() == TrangPhucStatus.SAN_HANG) {
 
-                RentalItem rentalItem = new RentalItem(saved.getId(), tp.getId(),
+                ChiTietPhieuThue rentalItem = new ChiTietPhieuThue(saved.getId(), tp.getId(),
                         item.getSoLuong(), item.getSoLuong() * tp.getGiaThue());
                 rentalItemRepository.save(rentalItem);
 
@@ -110,7 +110,7 @@ public class RentalService {
 
     @Transactional
     public void datCoc(Long phieuThueId) {
-        Rental phieuThue = findOrThrow(phieuThueId);
+        PhieuThue phieuThue = findOrThrow(phieuThueId);
 
         if (phieuThue.getTrangThai() == PhieuThueStatus.DA_HUY) {
             throw new IllegalStateException("Phiếu đã bị hủy, không thể đặt cọc");
@@ -128,7 +128,7 @@ public class RentalService {
 
     @Transactional
     public void huyPhieu(Long phieuThueId) {
-        Rental phieuThue = findOrThrow(phieuThueId);
+        PhieuThue phieuThue = findOrThrow(phieuThueId);
 
         if (phieuThue.getTrangThai() == PhieuThueStatus.DA_HUY) {
             throw new IllegalStateException("Phiếu đã bị hủy trước đó");
@@ -140,8 +140,8 @@ public class RentalService {
 
         phieuThue.setTrangThai(PhieuThueStatus.DA_HUY);
 
-        List<RentalItem> chiTiets = rentalItemRepository.findByPhieuThueId(phieuThueId);
-        for (RentalItem ct : chiTiets) {
+        List<ChiTietPhieuThue> chiTiets = rentalItemRepository.findByPhieuThueId(phieuThueId);
+        for (ChiTietPhieuThue ct : chiTiets) {
             trangPhucRepository.findById(ct.getTrangPhucId()).ifPresent(tp -> {
                 tp.setSoLuong(tp.getSoLuong() + ct.getSoLuong());
                 if (tp.getTrangThai() == TrangPhucStatus.KHONG_CON_HANG)
@@ -154,7 +154,7 @@ public class RentalService {
         log.info("Huy phieu {} thanh cong", phieuThueId);
     }
 
-    private Rental findOrThrow(Long id) {
+    private PhieuThue findOrThrow(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu thuê id=" + id));
     }

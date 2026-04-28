@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import rent.custome.demo.entity.RentalItem;
+import rent.custome.demo.entity.PhieuThue;
 
 @Repository
-public interface RentalItemRepository extends JpaRepository<RentalItem, Long> {
-    List<RentalItem> findByPhieuThueId(Long phieuThueId);
+public interface PhieuThueRepository extends JpaRepository<PhieuThue, Long>{
+    List<PhieuThue> findByKhachHangId(Long khachHangId);
 }

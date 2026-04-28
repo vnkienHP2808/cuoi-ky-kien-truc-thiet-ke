@@ -4,19 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.entity.Customer;
-import rent.custome.demo.repository.CustomerRepository;
-import rent.custome.demo.service.CartService;
+import rent.custome.demo.entity.KhachHang;
+import rent.custome.demo.repository.KhachHangRepository;
+import rent.custome.demo.service.GioHangService;
 
 @Controller
 @RequestMapping("/gio-hang")
-public class CartController {
+public class GioHangController {
 
-    private final CartService service;
-    private final CustomerRepository khachHangRepository;
+    private final GioHangService service;
+    private final KhachHangRepository khachHangRepository;
 
-    public CartController(CartService service,
-                              CustomerRepository khachHangRepository) {
+    public GioHangController(GioHangService service,
+                              KhachHangRepository khachHangRepository) {
         this.service = service;
         this.khachHangRepository = khachHangRepository;
     }
@@ -24,7 +24,7 @@ public class CartController {
     // xem giỏ hàng của khách hàng
     @GetMapping
     public String viewCart(@RequestParam Long khachHangId, Model model) {
-        Customer kh = khachHangRepository.findById(khachHangId)
+        KhachHang kh = khachHangRepository.findById(khachHangId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng id=" + khachHangId));
         model.addAttribute("items", service.getCartItems(khachHangId));
         model.addAttribute("kh", kh);

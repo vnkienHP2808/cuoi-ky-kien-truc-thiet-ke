@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chi_tiet_phieu_thue")
-public class RentalItem {
+public class ChiTietPhieuThue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +27,14 @@ public class RentalItem {
     @Column(name = "don_gia", nullable = false)
     private Double donGia;
 
-    public RentalItem(Long phieuThueId, Long trangPhucId, Integer soLuong, Double donGia) {
+    public ChiTietPhieuThue(Long phieuThueId, Long trangPhucId, Integer soLuong, Double donGia) {
         this.phieuThueId = phieuThueId;
         this.trangPhucId = trangPhucId;
         this.soLuong = soLuong;
         this.donGia = donGia;
     }
 
-    public RentalItem() {
+    public ChiTietPhieuThue() {
     }
 
     public Long getId() {

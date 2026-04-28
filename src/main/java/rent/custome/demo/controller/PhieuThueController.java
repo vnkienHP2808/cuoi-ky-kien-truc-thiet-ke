@@ -6,28 +6,28 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import rent.custome.demo.entity.Customer;
-import rent.custome.demo.entity.Rental;
-import rent.custome.demo.entity.RentalItem;
-import rent.custome.demo.repository.CustomerRepository;
-import rent.custome.demo.repository.RentalItemRepository;
-import rent.custome.demo.service.RentalService;
-import rent.custome.demo.service.CustomeService;
+import rent.custome.demo.entity.KhachHang;
+import rent.custome.demo.entity.PhieuThue;
+import rent.custome.demo.entity.ChiTietPhieuThue;
+import rent.custome.demo.repository.KhachHangRepository;
+import rent.custome.demo.repository.ChiTietPhieuThueRepository;
+import rent.custome.demo.service.PhieuThueService;
+import rent.custome.demo.service.TrangPhucService;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/phieu-thue")
-public class RentalController {
+public class PhieuThueController {
 
-    private final RentalService service;
-    private final CustomeService trangPhucService;
-    private final CustomerRepository khachHangRepository;
-    private final RentalItemRepository rentalItemRepository;
+    private final PhieuThueService service;
+    private final TrangPhucService trangPhucService;
+    private final KhachHangRepository khachHangRepository;
+    private final ChiTietPhieuThueRepository rentalItemRepository;
 
-    public RentalController(RentalService service, CustomeService trangPhucService,
-            CustomerRepository khachHangRepository,
-            RentalItemRepository rentalItemRepository) {
+    public PhieuThueController(PhieuThueService service, TrangPhucService trangPhucService,
+            KhachHangRepository khachHangRepository,
+            ChiTietPhieuThueRepository rentalItemRepository) {
         this.service = service;
         this.trangPhucService = trangPhucService;
         this.khachHangRepository = khachHangRepository;
@@ -37,23 +37,23 @@ public class RentalController {
     // tạo phiếu thuê mới từ giỏ hàng của khách hàng
     @GetMapping("/tao")
     public String showCreateForm(@RequestParam Long khachHangId, Model model) {
-        Customer kh = findKhOrThrow(khachHangId);
+        KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
-        model.addAttribute("pt", new Rental());
+        model.addAttribute("pt", new PhieuThue());
         return "phieu-thue/tao";
     }
 
     @PostMapping("/tao")
     public String create(@RequestParam Long khachHangId,
-                         @Valid @ModelAttribute("pt") Rental pt,
+                         @Valid @ModelAttribute("pt") PhieuThue pt,
                          BindingResult br, Model model, RedirectAttributes ra) {
-        Customer kh = findKhOrThrow(khachHangId);
+        KhachHang kh = findKhOrThrow(khachHangId);
         if (br.hasErrors()) {
             model.addAttribute("kh", kh);
             return "phieu-thue/tao";
         }
         try {
-            Rental saved = service.createFromCart(khachHangId, pt);
+            PhieuThue saved = service.createFromCart(khachHangId, pt);
             ra.addFlashAttribute("success", "Đã tạo phiếu thuê #" + saved.getId());
             return "redirect:/phieu-thue/" + saved.getId() + "?khachHangId=" + khachHangId;
         } catch (Exception e) {
@@ -66,7 +66,7 @@ public class RentalController {
     // danh sách phiếu thuê của khách hàng
     @GetMapping("/cua-toi")
     public String showListPhieuThue(@RequestParam Long khachHangId, Model model) {
-        Customer kh = findKhOrThrow(khachHangId);
+        KhachHang kh = findKhOrThrow(khachHangId);
         model.addAttribute("kh", kh);
         model.addAttribute("phieus", service.findByKhachHangId(khachHangId));
         return "phieu-thue/list-by-kh";
@@ -77,7 +77,7 @@ public class RentalController {
     public String datCoc(@PathVariable Long id,
                          @RequestParam Long khachHangId,
                          RedirectAttributes ra) {
-        Rental pt = service.findById(id).orElse(null);
+        PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu");
             return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
@@ -101,7 +101,7 @@ public class RentalController {
     public String huyPhieu(@PathVariable Long id,
                            @RequestParam Long khachHangId,
                            RedirectAttributes ra) {
-        Rental pt = service.findById(id).orElse(null);
+        PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu");
             return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
@@ -124,7 +124,7 @@ public class RentalController {
     public String showDetail(@PathVariable Long id,
                          @RequestParam Long khachHangId,
                          Model model, RedirectAttributes ra) {
-        Rental pt = service.findById(id).orElse(null);
+        PhieuThue pt = service.findById(id).orElse(null);
         if (pt == null) {
             ra.addFlashAttribute("error", "Không tìm thấy phiếu thuê");
             return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
@@ -133,10 +133,10 @@ public class RentalController {
             ra.addFlashAttribute("error", "Phiếu này không thuộc khách hàng đang chọn");
             return "redirect:/phieu-thue/cua-toi?khachHangId=" + khachHangId;
         }
-        Customer kh = findKhOrThrow(khachHangId);
+        KhachHang kh = findKhOrThrow(khachHangId);
 
 
-        List<RentalItem> chiTiets = rentalItemRepository.findByPhieuThueId(id);
+        List<ChiTietPhieuThue> chiTiets = rentalItemRepository.findByPhieuThueId(id);
 
         model.addAttribute("kh", kh);
         model.addAttribute("pt", pt);
@@ -147,7 +147,7 @@ public class RentalController {
     }
 
 
-    private Customer findKhOrThrow(Long id) {
+    private KhachHang findKhOrThrow(Long id) {
         return khachHangRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng id=" + id));
     }

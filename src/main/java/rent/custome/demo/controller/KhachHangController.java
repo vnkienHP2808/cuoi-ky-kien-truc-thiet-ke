@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import rent.custome.demo.entity.Customer;
-import rent.custome.demo.service.CustomerService;
+import rent.custome.demo.entity.KhachHang;
+import rent.custome.demo.service.KhachHangService;
 
 
 @Controller
 @RequestMapping("/admin")
-public class CustomerController {
+public class KhachHangController {
 
-    private final CustomerService service;
+    private final KhachHangService service;
 
-    public CustomerController(CustomerService service) {
+    public KhachHangController(KhachHangService service) {
         this.service = service;
     }
 
@@ -30,13 +30,13 @@ public class CustomerController {
     // thêm khách hàng mới
     @GetMapping("/them")
     public String showCreateForm(Model model) {
-        model.addAttribute("form", new Customer());
+        model.addAttribute("form", new KhachHang());
         model.addAttribute("isEdit", false);
         return "admin/form";
     }
 
     @PostMapping("/them")
-    public String create(@Valid @ModelAttribute("form") Customer khachHang,
+    public String create(@Valid @ModelAttribute("form") KhachHang khachHang,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", false);
@@ -56,7 +56,7 @@ public class CustomerController {
     // sửa thông tin khách hàng
     @GetMapping("/{id}/sua")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes ra) {
-        Customer kh = service.findById(id).orElse(null);
+        KhachHang kh = service.findById(id).orElse(null);
         if (kh == null) {
             ra.addFlashAttribute("error", "Không tìm thấy khách hàng");
             return "redirect:/admin";
@@ -69,7 +69,7 @@ public class CustomerController {
 
     @PostMapping("/{id}/sua")
     public String update(@PathVariable Long id,
-                         @Valid @ModelAttribute("form") Customer khachHang,
+                         @Valid @ModelAttribute("form") KhachHang khachHang,
                          BindingResult br, Model model, RedirectAttributes ra) {
         if (br.hasErrors()) {
             model.addAttribute("isEdit", true);

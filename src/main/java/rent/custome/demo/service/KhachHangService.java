@@ -7,34 +7,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import rent.custome.demo.entity.Customer;
-import rent.custome.demo.repository.CustomerRepository;
+import rent.custome.demo.entity.KhachHang;
+import rent.custome.demo.repository.KhachHangRepository;
 
 @Service
-public class CustomerService {
+public class KhachHangService {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
+    private static final Logger log = LoggerFactory.getLogger(KhachHangService.class);
 
-    private final CustomerRepository repo;
+    private final KhachHangRepository repo;
 
-    public CustomerService(CustomerRepository repo) {
+    public KhachHangService(KhachHangRepository repo) {
         this.repo = repo;
     }
 
-    public List<Customer> findAll(){
+    public List<KhachHang> findAll(){
         return repo.findAll();
     }
 
-    public Optional<Customer> findById(Long id){
+    public Optional<KhachHang> findById(Long id){
         return repo.findById(id);
     }
 
-    public void create(Customer khachHang){
+    public void create(KhachHang khachHang){
         if(repo.findByUsername(khachHang.getUsername()).isPresent()){
             throw new RuntimeException("Username '" + khachHang.getUsername() + "' da ton tai");
         }
 
-        Customer kh = new Customer();
+        KhachHang kh = new KhachHang();
         kh.setHoTen(khachHang.getHoTen());
         kh.setUsername(khachHang.getUsername());
         kh.setPassword(khachHang.getPassword());
@@ -50,8 +50,8 @@ public class CustomerService {
         log.info("Tao khach hang moi hoTen={}", khachHang.getHoTen());
     }
 
-    public void update(Long id, Customer khachHang){
-        Customer kh = repo.findById(id).orElseThrow(
+    public void update(Long id, KhachHang khachHang){
+        KhachHang kh = repo.findById(id).orElseThrow(
             () -> new RuntimeException("Khong tim thay khach hang co id=" + id));
 
         kh.setHoTen(khachHang.getHoTen());
@@ -74,7 +74,7 @@ public class CustomerService {
 
     public void doiTrangThai(Long khachHangId){
 
-        Customer kh = repo.findById(khachHangId).orElseThrow(
+        KhachHang kh = repo.findById(khachHangId).orElseThrow(
             () -> new RuntimeException("Khong tim thay khach hang co id=" + khachHangId));
 
             kh.setIsActive(!Boolean.TRUE.equals(kh.getIsActive()));

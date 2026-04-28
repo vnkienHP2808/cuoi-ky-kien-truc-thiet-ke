@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "gio_hang")
-public class Cart {
+public class GioHang {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +33,12 @@ public class Cart {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "gio_hang_id")
-    private List<CartItem> chiTiet = new ArrayList<>();
+    private List<ChiTietGioHang> chiTiet = new ArrayList<>();
 
-    public Cart() {
+    public GioHang() {
     }
 
-    public Cart(Long id, Long khachHangId, LocalDate ngayTao, LocalDate ngayCapNhat, List<CartItem> chiTiet) {
+    public GioHang(Long id, Long khachHangId, LocalDate ngayTao, LocalDate ngayCapNhat, List<ChiTietGioHang> chiTiet) {
         this.id = id;
         this.khachHangId = khachHangId;
         this.ngayTao = ngayTao;
@@ -78,11 +78,11 @@ public class Cart {
         this.ngayCapNhat = ngayCapNhat;
     }
 
-    public List<CartItem> getChiTiet() {
+    public List<ChiTietGioHang> getChiTiet() {
         return chiTiet;
     }
 
-    public void setChiTiet(List<CartItem> chiTiet) {
+    public void setChiTiet(List<ChiTietGioHang> chiTiet) {
         this.chiTiet = chiTiet;
     }
 

@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import rent.custome.demo.entity.Customer;
+import rent.custome.demo.entity.KhachHang;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long>{
+public interface KhachHangRepository extends JpaRepository<KhachHang, Long>{
 
-    Optional<Customer> findByUsername(String username);
+    Optional<KhachHang> findByUsername(String username);
 
 }
